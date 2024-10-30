@@ -5,7 +5,6 @@ const OPTIONS_SCRIPT = "addon_child";
 const JS_ONLY = ".js";
 const UTF_8 = "utf-8";
 
-
 const FRAGMENT_STORAGE_NAME = "fragments";
 const DEBUG_SETTING = "debugEnabled";
 const ENCRYPTED_MEDIA_SETTING = "encryptedMedia";
@@ -24,37 +23,17 @@ LoadOptions();
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => { // Listen for Messages from the Content Script / Options Page / PopupWorker
   if (sender.id == SENDER_UUID && (sender.envType == CONTENT_SCRIPT || sender.envType == OPTIONS_SCRIPT)) {
     if (message.checkDebugSettingRequest != undefined) {
-      var debugSetting = window.localStorage.getItem(DEBUG_SETTING);
-      if (debugSetting !== null) {
-        shouldDebug = debugSetting === "true";
-      }
-
+      LoadOptions();
       sendResponse({ debugEnabled: shouldDebug }); // BackgroundWorker -> Content Script
     }
     else if (message.requestForFragments != undefined) {
       sendResponse({ fragments: GetFragments(), completed: true }); // BackgroundWorker -> Content Script
     }
     else if (message.sendRequestForFragments != undefined) {
-      browser.tabs.query({}).then((e) => {
-        e.forEach(element => {
-          if (element.url.includes("twitch.tv") && !element.url.includes("supervisor")) {
-            browser.tabs.sendMessage(element.id, { requestFragments: true }).catch((error) => { // BackgroundWorker -> All Twitch Tabs
-              console.error(error);
-            });
-          }
-        });
-      }, (e) => { console.log(e) });
+      TwitchTabsQueryAll((tab) => TabSendMessage(tab, { requestFragments: true })); // BackgroundWorker -> All Twitch Tabs
     }
     else if (message.sendRequestForDebug != undefined) {
-      browser.tabs.query({}).then((e) => {
-        e.forEach(element => {
-          if (element.url.includes("twitch.tv") && !element.url.includes("supervisor")) {
-            browser.tabs.sendMessage(element.id, { requestDebug: true }).catch((error) => { // BackgroundWorker -> All Twitch Tabs
-              console.error(error);
-            });
-          }
-        });
-      }, (e) => { console.log(e) });
+      TwitchTabsQueryAll((tab) => TabSendMessage(tab, { requestDebug: true })); // BackgroundWorker -> All Twitch Tabs
     }
   }
   else {
@@ -130,19 +109,33 @@ browser.browserAction.onClicked.addListener(() => { // Browser Action Button
     },
   });
 
+  TwitchTabsQueryAll((tab) => ReloadTab(tab));
+});
+
+const TwitchTabsQueryAll = (callback) => {
   browser.tabs.query({}).then((e) => {
-    e.forEach(element => {
-      if (element.url.includes("twitch.tv") && !element.url.includes("supervisor")) {
-        browser.tabs.reload(element.id, { bypassCache: true }).then(() => { // BackgroundWorker -> All Twitch Tabs
-          shouldDebug && console.log("page refresh triggered by tabs")
-        }, (error) => {
-          console.error("tabs did not refresh the page, fallback to content script", error);
-          browser.tabs.sendMessage(element.id, { refreshPageRequest: true }).catch((error) => { console.error(error); }); // BackgroundWorker -> All Twitch Tabs Content Script
-        });
+    e.forEach(tab => {
+      if (tab.url.includes("twitch.tv") && !tab.url.includes("supervisor")) {
+        callback(tab);
       }
     });
+  }, (e) => { console.log(e) });
+}
+
+const ReloadTab = (tab) => {
+  browser.tabs.reload(tab.id, { bypassCache: true }).then(() => { // BackgroundWorker -> All Twitch Tabs
+    shouldDebug && console.log("page refresh triggered by tabs")
+  }, (error) => {
+    console.error("tabs did not refresh the page, fallback to content script", error);
+    TabSendMessage(tab, { refreshPageRequest: true }); // BackgroundWorker -> All Twitch Tabs Content Script
   });
-});
+}
+
+const TabSendMessage = (tab, message) => {
+  browser.tabs.sendMessage(tab.id, message).catch((error) => {
+    console.error(error);
+  });
+}
 
 function LoadOptions() {
   var debugSetting = window.localStorage.getItem(DEBUG_SETTING);
