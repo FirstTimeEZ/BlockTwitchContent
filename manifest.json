@@ -1,0 +1,59 @@
+{
+  "description": "Enables you to remove chatter from the chat using various different identifiers, phrases or simply a display name",
+  "manifest_version": 2,
+  "name": "Block Twitch Content",
+  "version": "78.46",
+  "icons": {
+    "256": "icons/icon-e.png"
+  },
+  "browser_action": {
+    "default_area": "navbar",
+    "default_title": "Block Twitch Content",
+    "default_icon": {
+      "256": "icons/icon-e.png"
+    }
+  },
+  "permissions": [
+    "tabs",
+    "activeTab",
+    "storage",
+    "webRequest",
+    "webRequestBlocking",
+    "declarativeNetRequestWithHostAccess",
+    "https://*.twitch.tv/*"
+  ],
+  "background": {
+    "scripts": [
+      "js/background.js"
+    ]
+  },
+  "page_action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "256": "icons/icon-e.png"
+    },
+    "show_matches": [
+      "https://*.twitch.tv/*"
+    ]
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.twitch.tv/*"
+      ],
+      "js": [
+        "js/content.js"
+      ]
+    }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "strict_min_version": "120.0",
+      "id": "BlockContent@Twitch.tv"
+    }
+  },
+  "options_ui": {
+    "page": "options.html",
+    "browser_style": true
+  }
+}

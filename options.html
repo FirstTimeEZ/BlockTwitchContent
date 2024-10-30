@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="chrome://global/skin/in-content/common.css" />
+</head>
+
+<body>
+    <button class="collapsible">Example Settings</button>
+    <div class="content">
+        <div>
+            <span class="s2">Below are some example settings to get you started that hide some bots and spam</span>
+        </div>
+        <span class="s2"></span>
+        <div style="background-color: #0e0f0e;border-radius: 4px;padding: 4px;white-space:pre-wrap;">StreamElements
+Streamlabs
+SoundAlerts
+Moobot
+Nightbot
+Fossabot
+!join
+!gamble
+!following
+!followage
+!links</div>
+    </div>
+    </div>
+
+    <button class="collapsible">Example Removed Content</button>
+    <div class="content">
+        <div>
+            <span class="s2">You can create rules out of any content in a removed message</span>
+        </div>
+        <div>
+            <span class="s2">Removed messages can be found in the console as warnings</span>
+        </div>
+        <div>
+            <span class="s2">The more specific you make a rule the less likely it will match on something by
+                accident</span>
+        </div>
+        <span class="s2"></span>
+        <div style="background-color: #0e0f0e;border-radius: 4px;padding: 4px;white-space:pre-wrap;">user-type=mod
+@badge-info=founder/30;
+badges=moderator/1,founder/0,bits/1;
+color=#DAA520;
+display-name=FirstTimeEZ;
+emotes=;
+first-msg=0;
+flags=;
+mod=1;
+returning-chatter=0;
+subscriber=1;
+turbo=0;
+user-id=712351331;
+user-type=mod
+:firsttimeez!firstimeez@firsttimeez.tmi.twitch.tv
+#examplestream :@ExampleUser this is an example of a message in the chat</div>
+    </div>
+    </div>
+
+    <div id="container">
+        <div>
+            <label class="l2">
+                <input name="debugEnabled" type="checkbox" />
+                Debug Enabled
+            </label>
+        </div>
+        <div>
+            <span class="s2">Enable extra output that could be useful if there are errors</span>
+        </div>
+    </div>
+
+    <div id="container">
+        <div>
+            <label class="l2">Note</label>
+        </div>
+        <div>
+            <span class="s2">A page refresh is required after you change the settings below</span>
+        </div>
+    </div>
+
+    <div id="container">
+        <div>
+            <label class="l2">
+                <input name="encryptedMedia" type="checkbox" checked="true" />
+                No Encrypted Media
+            </label>
+        </div>
+        <div>
+            <span class="s2">Do not allow the supervisor to use encrypted media</span>
+        </div>
+    </div>
+
+    <style>
+        #container {
+            margin-bottom: 10px;
+        }
+
+        div {
+            user-select: text;
+        }
+
+        span {
+            user-select: text;
+        }
+
+        body {
+            height: auto;
+            background: var(--in-content-box-background);
+            color: white !important;
+            user-select: text;
+        }
+
+        #input {
+            user-select: text;
+        }
+
+        .s2 {
+            margin-left: 6px;
+            user-select: text;
+        }
+
+        .l2 {
+            font-size: medium;
+        }
+
+        .collapsible {
+            background-color: #151615;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 95%;
+            border: none;
+            align-self: center;
+            align-content: center;
+            text-align: center;
+            outline: none;
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+
+        .active,
+        .collapsible:hover {
+            background-color: #151615;
+        }
+
+        .collapsible:after {
+            content: '\002B\0020 Open';
+            color: white;
+            font-weight: bold;
+            float: right;
+            margin-left: 5px;
+        }
+
+        .active:after {
+            content: "\2212\0020 Close";
+        }
+
+        .content {
+            width: 95%;
+            align-self: center;
+            align-content: center;
+            text-align: center;
+            padding: 0 18px;
+            margin-bottom: 4px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.2s ease-out;
+        }
+    </style>
+
+    <script src="js/options.js"></script>
+</body>
+
+</html>
