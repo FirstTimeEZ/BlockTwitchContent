@@ -1,18 +1,10 @@
-const CONFIG = {
-  SETTINGS: {
-    FRAGMENTS: "fragments",
-    DEBUG: "debugEnabled",
-    ENCRYPTED_MEDIA: "encryptedMedia"
-  }
-};
-
-const STATE = {
-  enabled: true,
-  debug: false,
-}
+import { CONFIG } from "./module.js";
+import { STATE } from "./module.js";
+import { debounceEvent } from "./module.js";
+import { logDebug } from "./module.js";
 
 const DOM = {
-  CONTENT_RULES: this.document.getElementsByName(CONFIG.SETTINGS.FRAGMENTS)
+  CONTENT_RULES: document.getElementsByName(CONFIG.SETTINGS.FRAGMENTS)
 }
 
 function RequestSettings(who) { // PopupWorker -> BackgroundWorker
@@ -31,16 +23,6 @@ function RequestSettings(who) { // PopupWorker -> BackgroundWorker
     });
 }
 
-function DebounceEvent(func, delay) {
-  let timeoutId;
-  return function (...args) {
-    timeoutId && clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => func.apply(this, args), delay);
-  };
-}
-
-const logDebug = (...args) => STATE.debug && console.log(...args);
-
 document.addEventListener("DOMContentLoaded", () => {
   var fragments = window.localStorage.getItem(CONFIG.SETTINGS.FRAGMENTS);
   if (fragments !== null && DOM.CONTENT_RULES.length > 0) {
@@ -49,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 if (DOM.CONTENT_RULES.length > 0) {
-  DOM.CONTENT_RULES[0].addEventListener("input", DebounceEvent((e) => {
+  DOM.CONTENT_RULES[0].addEventListener("input", debounceEvent((e) => {
     e.target.value !== "" ? window.localStorage.setItem(CONFIG.SETTINGS.FRAGMENTS, e.target.value) : window.localStorage.removeItem(CONFIG.SETTINGS.FRAGMENTS);
     browser.runtime.sendMessage({ sendRequestForFragments: true }); // PopupWorker -> BackgroundWorker
   }, 750));

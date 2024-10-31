@@ -1,14 +1,8 @@
-const CONFIG = {
-  SETTINGS: {
-    FRAGMENTS: "fragments",
-    DEBUG: "debugEnabled",
-    ENCRYPTED_MEDIA: "encryptedMedia"
-  }
-};
+import { CONFIG } from "./module.js";
 
 const DOM = {
-  DEBUG_OPTION: this.document.getElementsByName(CONFIG.SETTINGS.DEBUG),
-  ENCRYPTED_MEDIA_OPTION: this.document.getElementsByName(CONFIG.SETTINGS.ENCRYPTED_MEDIA),
+  DEBUG_OPTION: document.getElementsByName(CONFIG.SETTINGS.DEBUG),
+  ENCRYPTED_MEDIA_OPTION: document.getElementsByName(CONFIG.SETTINGS.ENCRYPTED_MEDIA),
   COLLAPSIBLES: document.getElementsByClassName("collapsible")
 }
 
