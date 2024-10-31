@@ -12,11 +12,11 @@ const STATE = {
   debug: false,
 }
 
-function RequestSettings() { // Content Script -> BackgroundWorker
+function RequestSettings(who) { // Content Script -> BackgroundWorker
   browser.runtime.sendMessage({ checkDebugSettingRequest: true },
     (response) => { // BackgroundWorker -> Content Script
       if (response != undefined) {
-        console.log(response);
+        console.log(who, response);
         STATE.debug = response.debugEnabled;
         STATE.enabled = response.extensionEnabled;
       }
@@ -41,7 +41,7 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => { // Li
       RequestFragments(); // Content Script -> BackgroundWorker
     }
     else if (request.requestSettings) {
-      RequestSettings(); // Content Script -> BackgroundWorker
+      RequestSettings("contentScript"); // Content Script -> BackgroundWorker
     }
     else if (request.refreshPageRequest) {
       logDebug("content script triggered page refresh");
@@ -74,4 +74,4 @@ window.addEventListener("message", (event) => { // Listen for Messages from the 
 console.log("Loading Content Script, If you see this more then once you may need to restart your browser");
 
 RequestFragments();
-RequestSettings();
+RequestSettings("contentScript");
