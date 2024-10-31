@@ -2,7 +2,7 @@
   "description": "Enables you to remove chatter from the chat using various different identifiers, phrases or simply a display name",
   "manifest_version": 2,
   "name": "Block Twitch Content",
-  "version": "90.2",
+  "version": "90.3",
   "icons": {
     "256": "icons/icon-e.png"
   },
@@ -24,7 +24,7 @@
   ],
   "background": {
     "scripts": [
-      "js/workerBackground.js"
+      "js/moduleBackground.js"
     ],
     "type": "module"
   },

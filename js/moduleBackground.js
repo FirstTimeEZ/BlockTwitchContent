@@ -1,12 +1,12 @@
-import { CONFIG } from "./module.js";
-import { STATE } from "./module.js";
-import { broadcastToTwitchTabs } from "./module.js";
-import { broadcastToTwitchTabsCallback } from "./module.js";
-import { reloadTab } from "./module.js";
-import { decodeData } from "./module.js";
-import { isValidSender } from "./module.js";
-import { logDebug } from "./module.js";
-import { logError } from "./module.js";
+import { CONFIG } from "./exports.js";
+import { STATE } from "./exports.js";
+import { broadcastToTwitchTabs } from "./exports.js";
+import { broadcastToTwitchTabsCallback } from "./exports.js";
+import { reloadTab } from "./exports.js";
+import { decodeData } from "./exports.js";
+import { isValidSender } from "./exports.js";
+import { logDebug } from "./exports.js";
+import { logError } from "./exports.js";
 
 function loadOptions() {
   const debugSetting = window.localStorage.getItem(CONFIG.SETTINGS.DEBUG);

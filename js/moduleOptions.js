@@ -1,4 +1,4 @@
-import { CONFIG } from "./module.js";
+import { CONFIG } from "./exports.js";
 
 const DOM = {
   DEBUG_OPTION: document.getElementsByName(CONFIG.SETTINGS.DEBUG),
