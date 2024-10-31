@@ -1,172 +1,222 @@
-const SENDER_UUID = "BlockContent@Twitch.tv";
-const CONTENT_SCRIPT = "content_child";
-const OPTIONS_SCRIPT = "addon_child";
+const CONFIG = {
+  SENDER_UUID: "BlockContent@Twitch.tv",
+  SCRIPTS: {
+    CONTENT: "content_child",
+    OPTIONS: "addon_child"
+  },
+  SETTINGS: {
+    FRAGMENTS: "fragments",
+    DEBUG: "debugEnabled",
+    ENCRYPTED_MEDIA: "encryptedMedia"
+  },
+  REGEX: {
+    FRAGMENT: /([A-Za-z])\.messageProcessor\.processMessage\(([A-Za-z])\.data\)/,
+    VENDOR: /https:\/\/assets\.twitch\.tv\/assets\/vendor-[0-9a-z]+?\.js/i
+  },
+  ENCODING: "utf-8",
+  JS_EXT: ".js",
+};
 
-const JS_ONLY = ".js";
-const UTF_8 = "utf-8";
+const STATE = {
+  fragments: [],
+  enabled: true,
+  debug: false,
+  supervisorEM: false
+};
 
-const FRAGMENT_STORAGE_NAME = "fragments";
-const DEBUG_SETTING = "debugEnabled";
-const ENCRYPTED_MEDIA_SETTING = "encryptedMedia";
+function loadOptions() {
+  const debugSetting = window.localStorage.getItem(CONFIG.SETTINGS.DEBUG);
+  const encryptedMedia = window.localStorage.getItem(CONFIG.SETTINGS.ENCRYPTED_MEDIA);
 
-var FIND_FRAGMENT_REGEX = /([A-Za-z])\.messageProcessor\.processMessage\(([A-Za-z])\.data\)/;
-var FIND_VENDOR_REGEX = /https:\/\/assets\.twitch\.tv\/assets\/vendor-[0-9a-z]+?\.js/i;
+  encryptedMedia === null ? (window.localStorage.setItem(CONFIG.SETTINGS.ENCRYPTED_MEDIA, "true"), STATE.supervisorEM = true) : (STATE.supervisorEM = encryptedMedia === "true");
 
-var fragsSplit = [];
+  return (STATE.debug = debugSetting === "true");
+}
 
-var enabled = true;
-var shouldDebug = false;
-var supervisorEM = false;
+function getFragments() {
+  const fragments = window.localStorage.getItem(CONFIG.SETTINGS.FRAGMENTS);
 
-LoadOptions();
-
-browser.runtime.onMessage.addListener((message, sender, sendResponse) => { // Listen for Messages from the Content Script / Options Page / PopupWorker
-  if (sender.id == SENDER_UUID && (sender.envType == CONTENT_SCRIPT || sender.envType == OPTIONS_SCRIPT)) {
-    if (message.checkDebugSettingRequest != undefined) {
-      LoadOptions();
-      sendResponse({ debugEnabled: shouldDebug }); // BackgroundWorker -> Content Script
-    }
-    else if (message.requestForFragments != undefined) {
-      sendResponse({ fragments: GetFragments(), completed: true }); // BackgroundWorker -> Content Script
-    }
-    else if (message.sendRequestForFragments != undefined) {
-      TwitchTabsQueryAll((tab) => TabSendMessage(tab, { requestFragments: true })); // BackgroundWorker -> All Twitch Tabs
-    }
-    else if (message.sendRequestForDebug != undefined) {
-      TwitchTabsQueryAll((tab) => TabSendMessage(tab, { requestDebug: true })); // BackgroundWorker -> All Twitch Tabs
-    }
+  if (fragments !== null) {
+    STATE.fragments = fragments ? fragments.split("\n") : [];
   }
-  else {
-    shouldDebug && console.log(message, sender);
+
+  return STATE.fragments;
+}
+
+function processDecodedString(decodedString) {
+  const matches = CONFIG.REGEX.FRAGMENT.exec(decodedString);
+
+  if (matches?.length === 3) {
+    logDebug("Found Fragment Location:", matches);
+    decodedString = STATE.enabled ? insertFragmentListener(matches, decodedString) : removeFragmentListener(matches, decodedString);
+  }
+
+  if (STATE.enabled) {
+    logDebug("Encrypted Media Allowed: ", STATE.supervisorEM === false);
+    STATE.supervisorEM === true && (decodedString = decodedString.replace('n.setAttribute("allow","encrypted-media *"),', ""));
+  }
+
+  return decodedString;
+}
+
+function insertFragmentListener(matches, decodedString) {
+  const insert = createPromiseWrapper(matches);
+  const result = decodedString.replace(CONFIG.REGEX.FRAGMENT, insert);
+
+  logDebug("Fragment listener insertion:", result.includes(insert) ? "successful" : "failed");
+
+  return result;
+}
+
+function removeFragmentListener(matches, decodedString) {
+  const insert = createPromiseWrapper(matches);
+  const originalCode = `${matches[1]}.messageProcessor.processMessage(${matches[2]}.data)`;
+
+  if (decodedString.includes(insert)) {
+    logDebug("Removing existing mixin");
+    const result = decodedString.replace(insert, originalCode);
+    logDebug("Mixin removal:", result.includes(insert) ? "failed" : "successful");
+    return result;
+  }
+
+  return decodedString;
+}
+
+function createPromiseWrapper(matches) {
+  return `new Promise((resolve) => {
+    const val = Math.floor(Math.random() * 100000000);
+    const handler = (e2) => {
+      if (e2.data.response !== undefined && e2.data.completed && e2.data.random === val) {
+        resolve(e2.data.response);
+        window.removeEventListener('message', handler);
+      }
+    };
+    window.addEventListener('message', handler);
+    window.postMessage({ 
+      random: val, 
+      type: 'fp', 
+      text: ${matches[2]}.data 
+    });
+  }, 'https://www.twitch.tv').then(response => {
+    if(response === 'w'){ 
+      ${matches[1]}.messageProcessor.processMessage(${matches[2]}.data)
+    } else {
+      console.warn('removed message:', ${matches[2]}.data);
+    }
+  });`;
+}
+
+const broadcastToTwitchTabs = (message) => {
+  try {
+    browser.tabs.query({}).then((tabs) => {
+      tabs.forEach(tab => {
+        if (isTwitchTab(tab)) {
+          logDebug(tab, message);
+          sendMessageToTab(tab, message);
+        }
+      });
+    });
+  } catch (error) {
+    logError("Error broadcasting to tabs:", error);
+  }
+}
+
+const broadcastToTwitchTabsCallback = (callback) => {
+  try {
+    browser.tabs.query({}).then((e) => e.forEach(tab => isTwitchTab(tab) && callback(tab)), (e) => { logDebug(e) });
+  } catch (error) {
+    logError("Error broadcasting to tabs:", error);
+  }
+}
+
+const reloadTab = (tab) => {
+  try {
+    browser.tabs.reload(tab.id, { bypassCache: true });
+    logDebug("Tab reloaded successfully");
+  } catch (error) {
+    logError("Tab reload failed, falling back to content script", error);
+    sendMessageToTab(tab, { refreshPageRequest: true });
+  }
+}
+
+const decodeData = (data, decoder) => data.length === 1 ? decoder.decode(data[0]) : data.reduce((acc, chunk, index) => { const stream = index !== data.length - 1; return acc + decoder.decode(chunk, { stream }); }, '')
+
+const isValidSender = sender => sender.id === CONFIG.SENDER_UUID && (sender.envType === CONFIG.SCRIPTS.CONTENT || sender.envType === CONFIG.SCRIPTS.OPTIONS);
+
+const isTwitchTab = tab => tab.url.includes("twitch.tv") && !tab.url.includes("supervisor");
+
+const sendMessageToTab = (tab, message) => browser.tabs.sendMessage(tab.id, message).catch(error => logError("Tab message failed:", error));
+
+const logDebug = (...args) => STATE.debug && console.log(...args);
+
+const logError = (...args) => console.error(...args);
+
+// Initialize Extension
+loadOptions();
+
+browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (!isValidSender(sender)) {
+    logDebug("Invalid message:", message, sender);
+    return;
+  }
+
+  const handlers = {
+    checkDebugSettingRequest: () => ({ debugEnabled: loadOptions(), extensionEnabled: STATE.enabled }),
+    requestForFragments: () => ({ fragments: getFragments(), completed: true }),
+    sendRequestForFragments: () => broadcastToTwitchTabs({ requestFragments: true }),
+    sendRequestForSettings: () => broadcastToTwitchTabs({ requestSettings: true })
+  };
+
+  const handler = Object.keys(handlers).find(key => message[key] !== undefined);
+  if (handler) {
+    const response = handlers[handler]();
+    if (response) sendResponse(response);
   }
 });
 
-browser.webRequest.onBeforeRequest.addListener((details) => { // Twitch Request Response Body Listener
-  if (details.url.endsWith(JS_ONLY) && FIND_VENDOR_REGEX.exec(details.url) != undefined) {
-    let filter = browser.webRequest.filterResponseData(details.requestId);
-    let decoder = new TextDecoder(UTF_8);
-    let encoder = new TextEncoder();
-    let data = [];
-
-    if (enabled) {
-      LoadOptions();
-      fragsSplit = GetFragments();
-      console.log("Fragments: " + (fragsSplit.length > 0 ? fragsSplit.length : "You need to add a rule in the settings, nothing to remove from chat"));
-    }
-
-    shouldDebug && console.log(details.url);
-
-    filter.ondata = (event) => {
-      data.push(event.data);
-    };
-
-    filter.onstop = () => {
-      let decodedString = "";
-      if (data.length === 1) {
-        decodedString = decoder.decode(data[0]);
-      } else {
-        for (let i = 0; i < data.length; i++) {
-          let stream = i !== data.length - 1;
-          decodedString += decoder.decode(data[i], {
-            stream
-          });
-        }
-      }
-
-      var matches = FIND_FRAGMENT_REGEX.exec(decodedString);
-      if (matches != undefined && matches.length == 3) {
-        shouldDebug && console.log("Found Fragment Location: " + FIND_FRAGMENT_REGEX, matches);
-        decodedString = enabled ? InsertFragmentListener(matches, decodedString) : RemoveFragmentListener(matches, decodedString);
-      }
-
-      if (!supervisorEM && enabled) {
-        shouldDebug && console.log("No Encrypted Media");
-        decodedString = decodedString.replace('n.setAttribute("allow","encrypted-media *"),', "");
-      }
-
-      filter.write(encoder.encode(decodedString));
-      filter.close();
-
-      data = null;
-      decoder = null;
-      encoder = null;
-    }
-
-    str = null;
+browser.webRequest.onBeforeRequest.addListener((details) => {
+  if (!details.url.endsWith(CONFIG.JS_EXT) || !CONFIG.REGEX.VENDOR.test(details.url)) {
+    return;
   }
+
+  const filter = browser.webRequest.filterResponseData(details.requestId);
+  const data = [];
+
+  if (STATE.enabled) {
+    loadOptions();
+    STATE.fragments = getFragments();
+    logDebug(`Fragments: ${STATE.fragments.length || 'No rules found in settings'}`);
+  }
+
+  const decoder = new TextDecoder(CONFIG.ENCODING);
+  const encoder = new TextEncoder();
+
+  filter.ondata = event => data.push(event.data);
+
+  filter.onstop = () => {
+    try {
+      const decodedString = decodeData(data, decoder);
+      const processedString = processDecodedString(decodedString);
+
+      filter.write(encoder.encode(processedString));
+    } catch (error) {
+      logError('Error processing request:', error);
+    } finally {
+      filter.close();
+    }
+  };
 }, { urls: ["https://*.twitch.tv/*"] }, ["blocking", "requestBody"]);
 
-browser.browserAction.onClicked.addListener(() => { // Browser Action Button
-  enabled = !enabled;
+browser.browserAction.onClicked.addListener(() => {
+  STATE.enabled = !STATE.enabled;
 
-  shouldDebug && console.log("enabled: ", enabled);
+  console.log("Extension enabled:", STATE.enabled);
 
   browser.browserAction.setIcon({
-    path: enabled ? {
-      256: "icons/icon-e.png"
-    } : {
-      256: "icons/icon-d.png"
-    },
+    path: {
+      256: STATE.enabled ? "icons/icon-e.png" : "icons/icon-d.png"
+    }
   });
 
-  TwitchTabsQueryAll((tab) => ReloadTab(tab));
+  broadcastToTwitchTabsCallback(tab => reloadTab(tab));
 });
-
-const TwitchTabsQueryAll = (callback) => {
-  browser.tabs.query({}).then((e) => {
-    e.forEach(tab => {
-      if (tab.url.includes("twitch.tv") && !tab.url.includes("supervisor")) {
-        callback(tab);
-      }
-    });
-  }, (e) => { console.log(e) });
-}
-
-const ReloadTab = (tab) => {
-  browser.tabs.reload(tab.id, { bypassCache: true }).then(() => { // BackgroundWorker -> All Twitch Tabs
-    shouldDebug && console.log("page refresh triggered by tabs")
-  }, (error) => {
-    console.error("tabs did not refresh the page, fallback to content script", error);
-    TabSendMessage(tab, { refreshPageRequest: true }); // BackgroundWorker -> All Twitch Tabs Content Script
-  });
-}
-
-const TabSendMessage = (tab, message) => {
-  browser.tabs.sendMessage(tab.id, message).catch((error) => {
-    console.error(error);
-  });
-}
-
-function LoadOptions() {
-  var debugSetting = window.localStorage.getItem(DEBUG_SETTING);
-  var encryptedMedia = window.localStorage.getItem(ENCRYPTED_MEDIA_SETTING);
-
-  shouldDebug = debugSetting !== null ? debugSetting == "true" : false;
-  encryptedMedia !== null ? (supervisorEM = encryptedMedia == "false") : window.localStorage.setItem(ENCRYPTED_MEDIA_SETTING, true);
-}
-
-function GetFragments() {
-  var fragments = window.localStorage.getItem(FRAGMENT_STORAGE_NAME);
-  return fragments !== null ? fragments.split("\n") : [];
-}
-
-function InsertFragmentListener(matches, decodedString) {
-  var INSERT = "new Promise((resolve) => { const val = Math.floor(Math.random() * 100000000); const handler = (e2) => { if (e2.data.response != undefined && e2.data.completed && e2.data.random == val) { resolve(e2.data.response); window.removeEventListener('message', handler); } }; window.addEventListener('message', handler); window.postMessage({ random: val, type: 'fp', text: " + matches[2] + ".data }); }, 'https://www.twitch.tv').then(response => { if(response == 'w'){ " + matches[1] + ".messageProcessor.processMessage(" + matches[2] + ".data) } else { console.warn('removed message:', " + matches[2] + ".data); }});";
-
-  decodedString = decodedString.replace(FIND_FRAGMENT_REGEX, INSERT);
-  shouldDebug && decodedString.search(INSERT) != -1 && console.log("Inserted Promise Event Listener into page to handle socket messages");
-
-  return decodedString;
-}
-
-function RemoveFragmentListener(matches, decodedString) {
-  var INSERT = "new Promise((resolve) => { const val = Math.floor(Math.random() * 100000000); const handler = (e2) => { if (e2.data.response != undefined && e2.data.completed && e2.data.random == val) { resolve(e2.data.response); window.removeEventListener('message', handler); } }; window.addEventListener('message', handler); window.postMessage({ random: val, type: 'fp', text: " + matches[2] + ".data }); }, 'https://www.twitch.tv').then(response => { if(response == 'w'){ " + matches[1] + ".messageProcessor.processMessage(" + matches[2] + ".data) } else { console.warn('removed message:', " + matches[2] + ".data); }});";
-
-  if (decodedString.search(INSERT) != -1) {
-    shouldDebug && console.log("Found Mixin that needs to be removed");
-    decodedString = decodedString.replace(INSERT, matches[1] + ".messageProcessor.processMessage(" + matches[2] + ".data)");
-    shouldDebug && decodedString.search(INSERT) == -1 ? console.log("Successfully removed Mixin") : console.log("Failed to remove Mixin");
-  }
-
-  return decodedString;
-}

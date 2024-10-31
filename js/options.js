@@ -1,32 +1,38 @@
-const DEBUG_SETTING = "debugEnabled";
-const ENCRYPTED_MEDIA_SETTING = "encryptedMedia";
+const CONFIG = {
+  SETTINGS: {
+    FRAGMENTS: "fragments",
+    DEBUG: "debugEnabled",
+    ENCRYPTED_MEDIA: "encryptedMedia"
+  }
+};
 
-var DEBUG_DOM = this.document.getElementsByName(DEBUG_SETTING);
-var ENCRYPTED_MEDIA_DOM = this.document.getElementsByName(ENCRYPTED_MEDIA_SETTING);
-
-var COLLAPSIBLES_DOM = document.getElementsByClassName("collapsible");
-
-for (var i = 0; i < COLLAPSIBLES_DOM.length; i++) {
-  COLLAPSIBLES_DOM[i].addEventListener("click", function () {
-    this.classList.toggle("active");
-    var content = this.nextElementSibling;
-    content.style.maxHeight ? (content.style.maxHeight = null) : content.style.maxHeight = content.scrollHeight + "px";
-  });
+const DOM = {
+  DEBUG_OPTION: this.document.getElementsByName(CONFIG.SETTINGS.DEBUG),
+  ENCRYPTED_MEDIA_OPTION: this.document.getElementsByName(CONFIG.SETTINGS.ENCRYPTED_MEDIA),
+  COLLAPSIBLES: document.getElementsByClassName("collapsible")
 }
 
-DEBUG_DOM[0].addEventListener("click", (e) => {
-  window.localStorage.setItem(DEBUG_SETTING, e.target.checked);
-  browser.runtime.sendMessage({ sendRequestForDebug: true }); // Options -> BackgroundWorker
+DOM.DEBUG_OPTION[0].addEventListener("click", (e) => {
+  window.localStorage.setItem(CONFIG.SETTINGS.DEBUG, e.target.checked);
+  browser.runtime.sendMessage({ sendRequestForSettings: true }); // Options -> BackgroundWorker
 })
 
-ENCRYPTED_MEDIA_DOM[0].addEventListener("click", (e) => {
-  window.localStorage.setItem(ENCRYPTED_MEDIA_SETTING, e.target.checked);
+DOM.ENCRYPTED_MEDIA_OPTION[0].addEventListener("click", (e) => {
+  window.localStorage.setItem(CONFIG.SETTINGS.ENCRYPTED_MEDIA, e.target.checked);
 })
 
 document.addEventListener('DOMContentLoaded', () => {
-  var debugEnabled = window.localStorage.getItem(DEBUG_SETTING);
-  DEBUG_DOM[0].checked = debugEnabled !== null ? debugEnabled == "true" : false;
+  const debugEnabled = window.localStorage.getItem(CONFIG.SETTINGS.DEBUG);
+  const encryptedMediaDisabled = window.localStorage.getItem(CONFIG.SETTINGS.ENCRYPTED_MEDIA);
 
-  var encryptedMedia = window.localStorage.getItem(ENCRYPTED_MEDIA_SETTING);
-  ENCRYPTED_MEDIA_DOM[0].checked = encryptedMedia !== null ? encryptedMedia == "true" : true;
+  DOM.DEBUG_OPTION[0].checked = debugEnabled !== null ? debugEnabled == "true" : false;
+  DOM.ENCRYPTED_MEDIA_OPTION[0].checked = encryptedMediaDisabled !== null ? encryptedMediaDisabled === "true" : true;
 });
+
+for (var i = 0; i < DOM.COLLAPSIBLES.length; i++) {
+  DOM.COLLAPSIBLES[i].addEventListener("click", function () {
+    this.classList.toggle("active");
+    const content = this.nextElementSibling;
+    content.style.maxHeight ? (content.style.maxHeight = null) : content.style.maxHeight = content.scrollHeight + "px";
+  });
+}
