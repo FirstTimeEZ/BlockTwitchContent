@@ -1,37 +1,16 @@
 (async () => {
-  const { CONFIG, STATE, logDebug } = await import(browser.runtime.getURL('') + 'js/exports.js');
+  const { CONFIG, STATE, logDebug, RequestSettings, RequestFragments } = await import(browser.runtime.getURL('') + 'js/exports.js');
 
-  function RequestSettings(who) { // Content Script -> BackgroundWorker
-    browser.runtime.sendMessage({ checkDebugSettingRequest: true },
-      (response) => { // BackgroundWorker -> Content Script
-        if (response != undefined) {
-          console.log(who, response);
-          STATE.debug = response.debugEnabled;
-          STATE.enabled = response.extensionEnabled;
-        }
-      });
-  }
-
-  function RequestFragments() { // Content Script -> BackgroundWorker
-    browser.runtime.sendMessage({ requestForFragments: true },
-      (response) => { // BackgroundWorker -> Content Script
-        if (response.fragments != undefined) {
-          STATE.fragments = response.fragments;
-          logDebug("Updated fragments", response);
-        }
-      });
-  }
-
-  browser.runtime.onMessage.addListener((request, sender, sendResponse) => { // Listen for messages from the BackgroundWorker
+  browser.runtime.onMessage.addListener((request, sender, sendResponse) => { // Listen for messages from the BackgroundModule
     if (sender.id == CONFIG.SENDER_UUID && sender.envType == CONFIG.SCRIPTS.OPTIONS) {
       if (request.requestFragments) {
-        RequestFragments(); // Content Script -> BackgroundWorker
+        RequestFragments(); // ContentModule -> BackgroundModule
       }
       else if (request.requestSettings) {
-        RequestSettings("contentScript"); // Content Script -> BackgroundWorker
+        RequestSettings("ContentModule"); // ContentModule -> BackgroundModule
       }
       else if (request.refreshPageRequest) {
-        logDebug("content script triggered page refresh");
+        logDebug("content module triggered page refresh");
 
         location.reload();
       }
@@ -52,14 +31,14 @@
       && typeof event.data.text === 'string'
       && Number.isFinite(event.data.random)) {
 
-      logDebug("ContentScript", event.data.text, event.data.random);
+      logDebug("ContentModule", event.data.text, event.data.random);
       const isFragmentMatched = STATE.fragments.some(frag => frag !== "" && event.data.text.includes(frag));
       window.postMessage({ response: isFragmentMatched ? "f" : "w", completed: true, random: event.data.random }, "https://www.twitch.tv"); // Content Script -> Web Page Mixin
     }
   });
 
-  console.log("Loading Content Script, If you see this more then once you may need to restart your browser");
+  console.log("Loading Content Module, If you see this more then once you may need to restart your browser");
 
   RequestFragments();
-  RequestSettings("contentScript");
+  RequestSettings("ContentModule");
 })();

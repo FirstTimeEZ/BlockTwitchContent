@@ -1,31 +1,7 @@
-import { CONFIG } from "./exports.js";
-import { STATE } from "./exports.js";
-import { broadcastToTwitchTabs } from "./exports.js";
-import { broadcastToTwitchTabsCallback } from "./exports.js";
-import { reloadTab } from "./exports.js";
-import { decodeData } from "./exports.js";
-import { isValidSender } from "./exports.js";
-import { logDebug } from "./exports.js";
-import { logError } from "./exports.js";
-
-function loadOptions() {
-  const debugSetting = window.localStorage.getItem(CONFIG.SETTINGS.DEBUG);
-  const encryptedMedia = window.localStorage.getItem(CONFIG.SETTINGS.ENCRYPTED_MEDIA);
-
-  encryptedMedia === null ? (window.localStorage.setItem(CONFIG.SETTINGS.ENCRYPTED_MEDIA, "true"), STATE.supervisorEM = true) : (STATE.supervisorEM = encryptedMedia === "true");
-
-  return (STATE.debug = debugSetting === "true");
-}
-
-function getFragments() {
-  const fragments = window.localStorage.getItem(CONFIG.SETTINGS.FRAGMENTS);
-
-  if (fragments !== null) {
-    STATE.fragments = fragments ? fragments.split("\n") : [];
-  }
-
-  return STATE.fragments;
-}
+import { CONFIG, STATE } from "./exports.js";
+import { broadcastToTwitchTabs, broadcastToTwitchTabsCallback } from "./exports.js";
+import { loadOptions, reloadTab, getFragments } from "./exports.js";
+import { decodeData, isValidSender, logDebug, logError } from "./exports.js";
 
 function processDecodedString(decodedString) {
   const matches = CONFIG.REGEX.FRAGMENT.exec(decodedString);
