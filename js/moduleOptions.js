@@ -8,7 +8,7 @@ const DOM = {
 
 DOM.DEBUG_OPTION[0].addEventListener("click", (e) => {
   window.localStorage.setItem(CONFIG.SETTINGS.DEBUG, e.target.checked);
-  browser.runtime.sendMessage({ sendRequestForSettings: true }); // OptionsModule -> BackgroundModule
+  browser.runtime.sendMessage({ requestForStateUpdate: true }); // OptionsModule -> BackgroundModule
 })
 
 DOM.ENCRYPTED_MEDIA_OPTION[0].addEventListener("click", (e) => {

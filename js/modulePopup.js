@@ -1,6 +1,4 @@
-import { CONFIG, STATE } from "./exports/exports.js";
-import { logDebug } from "./exports/exports.js";
-import { RequestSettings } from "./exports/exports.js";
+import { CONFIG, STATE, requestState, logDebug } from "./exports/exports.js";
 import { debounceEvent } from "./exports/debounce.js";
 
 const DOM = {
@@ -8,36 +6,32 @@ const DOM = {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  var fragments = window.localStorage.getItem(CONFIG.SETTINGS.FRAGMENTS);
-  if (fragments !== null && DOM.CONTENT_RULES.length > 0) {
-    DOM.CONTENT_RULES[0].value = fragments;
-  }
+  requestState("popupModule", () => {
+    if (!STATE.enabled) {
+      DOM.CONTENT_RULES[0].disabled = true;
+    }
+    else {
+      DOM.CONTENT_RULES[0].value = STATE.fragments_storage;
+    }
+  });
 });
-
-if (DOM.CONTENT_RULES.length > 0) {
-  DOM.CONTENT_RULES[0].addEventListener("input", debounceEvent((e) => {
-    e.target.value !== "" ? window.localStorage.setItem(CONFIG.SETTINGS.FRAGMENTS, e.target.value) : window.localStorage.removeItem(CONFIG.SETTINGS.FRAGMENTS);
-    browser.runtime.sendMessage({ sendRequestForFragments: true }); // PopupModule -> BackgroundModule
-  }, 750));
-}
 
 window.addEventListener('unload', function () {
   try {
     const capture = DOM.CONTENT_RULES[0].value;
 
     if (capture != undefined && capture.length > 1) {
-      logDebug('Saving rules on close', DOM.CONTENT_RULES[0].value);
       window.localStorage.setItem(CONFIG.SETTINGS.FRAGMENTS, DOM.CONTENT_RULES[0].value);
-      browser.runtime.sendMessage({ sendRequestForFragments: true }); // PopupModule -> BackgroundModule
+      browser.runtime.sendMessage({ requestForStateUpdate: true }); // PopupModule -> BackgroundModule
     }
   } catch {
-    logDebug("DOM is already destroyed");
-  }
-})
-
-RequestSettings("popupWorker", () => {
-  if (!STATE.enabled) {
-    console.log("Prompt is disabled because extension is disabled");
-    DOM.CONTENT_RULES[0].disabled = true;
+    logDebug("popupModule::domDestroyed");
   }
 });
+
+if (DOM.CONTENT_RULES.length > 0) {
+  DOM.CONTENT_RULES[0].addEventListener("input", debounceEvent((e) => {
+    e.target.value !== "" ? window.localStorage.setItem(CONFIG.SETTINGS.FRAGMENTS, e.target.value) : window.localStorage.removeItem(CONFIG.SETTINGS.FRAGMENTS);
+    browser.runtime.sendMessage({ requestForStateUpdate: true }); // PopupModule -> BackgroundModule
+  }, 750));
+}

@@ -21,46 +21,23 @@ export const STATE = {
   fragments: [],
   enabled: true,
   debug: false,
-  supervisorEM: false
+  supervisorEM: false,
+  fragments_storage: ""
 };
 
-export function loadOptions() {
-  const debugSetting = window.localStorage.getItem(CONFIG.SETTINGS.DEBUG);
-  const encryptedMedia = window.localStorage.getItem(CONFIG.SETTINGS.ENCRYPTED_MEDIA);
-
-  encryptedMedia === null ? (window.localStorage.setItem(CONFIG.SETTINGS.ENCRYPTED_MEDIA, "true"), STATE.supervisorEM = true) : (STATE.supervisorEM = encryptedMedia === "true");
-
-  return (STATE.debug = debugSetting === "true");
-}
-
-export function getFragments() {
-  const fragments = window.localStorage.getItem(CONFIG.SETTINGS.FRAGMENTS);
-
-  if (fragments !== null) {
-    STATE.fragments = fragments ? fragments.split("\n") : [];
-  }
-
-  return STATE.fragments;
-}
-
-export function RequestSettings(who, func) {
-  browser.runtime.sendMessage({ checkDebugSettingRequest: true },
+export function requestState(who, func) {
+  browser.runtime.sendMessage({ requestForState: true },
     (response) => {
       if (response != undefined) {
-        console.log(who, response);
-        STATE.debug = response.debugEnabled;
-        STATE.enabled = response.extensionEnabled;
-        func != undefined ? func() : null;
-      }
-    });
-}
+        STATE.debug = response.state.debug;
+        STATE.enabled = response.state.enabled;
+        STATE.fragments = response.state.fragments;
+        STATE.fragments_storage = response.state.fragments_storage;
+        STATE.supervisorEM = response.state.supervisorEM;
 
-export function RequestFragments() {
-  browser.runtime.sendMessage({ requestForFragments: true },
-    (response) => {
-      if (response.fragments != undefined) {
-        STATE.fragments = response.fragments;
-        logDebug("Updated fragments", response);
+        logDebug(who + "::refreshState", STATE);
+
+        func != undefined ? func() : null;
       }
     });
 }

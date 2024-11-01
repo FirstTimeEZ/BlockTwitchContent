@@ -11,7 +11,7 @@ export const broadcastToTwitchTabs = (message) => {
       });
     });
   } catch (error) {
-    logError("Error broadcasting to tabs:", error);
+    logError("tabs::errorBroadcasting", error);
   }
 }
 
@@ -19,20 +19,20 @@ export const broadcastToTwitchTabsCallback = (callback) => {
   try {
     browser.tabs.query({}).then((e) => e.forEach(tab => isTwitchTab(tab) && callback(tab)), (e) => { logDebug(e) });
   } catch (error) {
-    logError("Error broadcasting to tabs:", error);
+    logError("tabs::errorBroadcasting", error);
   }
 }
 
 export const reloadTab = (tab) => {
   try {
     browser.tabs.reload(tab.id, { bypassCache: true });
-    logDebug("Tab reloaded successfully");
+    logDebug("tabs::reloadedSuccessfully");
   } catch (error) {
-    logError("Tab reload failed, falling back to content script", error);
+    logError("tabs::reloadFailedUseFallback", error);
     sendMessageToTab(tab, { refreshPageRequest: true });
   }
 }
 
-export const sendMessageToTab = (tab, message) => browser.tabs.sendMessage(tab.id, message).catch(error => logError("Tab message failed:", error));
+export const sendMessageToTab = (tab, message) => browser.tabs.sendMessage(tab.id, message).catch(error => logError("tabs::errorBroadcasting", error));
 
 export const isTwitchTab = tab => tab.url.includes("twitch.tv") && !tab.url.includes("supervisor");

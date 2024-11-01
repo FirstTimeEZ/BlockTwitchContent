@@ -4,7 +4,7 @@ export function insertFragmentListener(matches, decodedString) {
   const insert = createFragmentListener(matches);
   const result = decodedString.replace(CONFIG.REGEX.FRAGMENT, insert);
 
-  logDebug("Fragment listener insertion:", result.includes(insert) ? "successful" : "failed");
+  logDebug("backgroundModule::fragmentListenerInserted", result.includes(insert));
 
   return result;
 }
@@ -14,9 +14,8 @@ export function removeFragmentListener(matches, decodedString) {
   const originalCode = `${matches[1]}.messageProcessor.processMessage(${matches[2]}.data)`;
 
   if (decodedString.includes(insert)) {
-    logDebug("Removing existing mixin");
     const result = decodedString.replace(insert, originalCode);
-    logDebug("Mixin removal:", result.includes(insert) ? "failed" : "successful");
+    logDebug("backgroundModule::mixinRemoved", result.includes(insert));
     return result;
   }
 

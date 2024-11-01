@@ -1,5 +1,5 @@
 import { CONFIG, STATE } from "./exports/exports.js";
-import { loadOptions, getFragments } from "./exports/exports.js";
+import { getStorageItemStates } from "./exports/storage.js";
 import { decodeData, isValidSender, logDebug } from "./exports/exports.js";
 import { broadcastToTwitchTabs, broadcastToTwitchTabsCallback, reloadTab } from "./exports/tabs.js";
 import { definedContentRules } from "./exports/content-rules.js";
@@ -18,12 +18,12 @@ function checkVendor(details) {
 
     const matches = CONFIG.REGEX.FRAGMENT.exec(decodedString);
     if (matches?.length === 3) {
-      logDebug("Found Fragment Location:", matches);
+      logDebug("backgroundModule::foundFragmentLocation", matches);
       decodedString = STATE.enabled ? insertFragmentListener(matches, decodedString) : removeFragmentListener(matches, decodedString);
     }
 
     if (STATE.enabled) {
-      logDebug("Encrypted Media Allowed: ", STATE.supervisorEM === false);
+      logDebug("backgroundModule::encryptedMediaAllowed", STATE.supervisorEM === false);
       STATE.supervisorEM === true && (decodedString = decodedString.replace('n.setAttribute("allow","encrypted-media *"),', ""));
     }
 
@@ -70,15 +70,13 @@ function checkGQL(details) {
 
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (!isValidSender(sender)) {
-    logDebug("Invalid message:", message, sender);
+    logDebug("backgroundModule::invalidMessage", message, sender);
     return;
   }
 
   const handlers = {
-    checkDebugSettingRequest: () => ({ debugEnabled: loadOptions(), extensionEnabled: STATE.enabled }),
-    requestForFragments: () => ({ fragments: getFragments(), completed: true }),
-    sendRequestForFragments: () => broadcastToTwitchTabs({ requestFragments: true }),
-    sendRequestForSettings: () => broadcastToTwitchTabs({ requestSettings: true })
+    requestForState: () => getStorageItemStates(),
+    requestForStateUpdate: () => { getStorageItemStates(); broadcastToTwitchTabs({ refreshState: true }); }
   };
 
   const handler = Object.keys(handlers).find(key => message[key] !== undefined);
@@ -90,9 +88,8 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 browser.webRequest.onBeforeRequest.addListener((details) => {
   if (STATE.enabled && details.type == "main_frame") {
-    loadOptions();
-    STATE.fragments = getFragments();
-    console.log(`Content rules loaded: ${STATE.fragments.length || 'No content rules found'}`);
+    getStorageItemStates();
+    console.log(`backgroundModule::` + (STATE.fragments.length > 0 ? `contentRulesLoaded` : 'contentRulesNotFound'), STATE.fragments.length);
     return {};
   }
 
@@ -108,7 +105,7 @@ browser.webRequest.onBeforeRequest.addListener((details) => {
 browser.browserAction.onClicked.addListener(() => {
   STATE.enabled = !STATE.enabled;
 
-  console.log("Extension enabled:", STATE.enabled);
+  console.log("backgroundModule::extensionEnabled", STATE.enabled);
 
   browser.browserAction.setIcon({
     path: {
