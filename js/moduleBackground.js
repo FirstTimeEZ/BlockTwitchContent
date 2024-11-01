@@ -1,6 +1,6 @@
 import { CONFIG, STATE } from "./exports/exports.js";
 import { loadOptions, getFragments } from "./exports/exports.js";
-import { decodeData, isValidSender, logDebug, logError } from "./exports/exports.js";
+import { decodeData, isValidSender, logDebug } from "./exports/exports.js";
 import { broadcastToTwitchTabs, broadcastToTwitchTabsCallback, reloadTab } from "./exports/tabs.js";
 import { definedContentRules } from "./exports/content-rules.js";
 import { insertFragmentListener, removeFragmentListener } from "./exports/fragments.js";
@@ -29,6 +29,7 @@ function checkVendor(details) {
 
     filter.write(encoder.encode(decodedString));
     filter.close();
+    data.length = 0;
   };
 }
 
@@ -44,23 +45,26 @@ function checkGQL(details) {
     let decodedString = decodeData(data, decoder);
 
     if (decodedString.includes(',"recentChatMessages":[{"id":')) {
-      let obj = JSON.parse(decodedString);
+      let json = JSON.parse(decodedString);
 
-      for (let index = 0; index < obj.length; index++) {
-        const element = obj[index];
+      for (let index = 0; index < json.length; index++) {
+        const element = json[index];
         if (element.extensions.operationName === "MessageBufferChatHistory") {
-          element.data.channel.recentChatMessages = element.data.channel.recentChatMessages.filter(item => {
-            return !STATE.fragments.some(text => text != "" && (item.sender.displayName.includes(text) || item.content.text.includes(text) || definedContentRules(text, item)));
-          });
+          element.data.channel.recentChatMessages = element.data.channel.recentChatMessages.filter(chatMessage =>
+            !STATE.fragments.some(fragment => fragment.length > 1
+              && (chatMessage.sender.displayName.includes(fragment)
+                || chatMessage.content.text.includes(fragment)
+                || definedContentRules(fragment, chatMessage))));
           break;
         }
       }
 
-      decodedString = JSON.stringify(obj);
+      decodedString = JSON.stringify(json);
     }
 
     filter.write(encoder.encode(decodedString));
     filter.close();
+    data.length = 0;
   }
 }
 
