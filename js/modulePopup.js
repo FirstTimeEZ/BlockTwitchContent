@@ -1,7 +1,7 @@
-import { CONFIG, STATE } from "./exports.js";
-import { debounceEvent } from "./exports.js";
-import { logDebug } from "./exports.js";
-import { RequestSettings } from "./exports.js";
+import { CONFIG, STATE } from "./exports/exports.js";
+import { logDebug } from "./exports/exports.js";
+import { RequestSettings } from "./exports/exports.js";
+import { debounceEvent } from "./exports/debounce.js";
 
 const DOM = {
   CONTENT_RULES: document.getElementsByName(CONFIG.SETTINGS.FRAGMENTS)

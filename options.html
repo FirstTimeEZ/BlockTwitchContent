@@ -8,29 +8,29 @@
 </head>
 
 <body>
-    <button class="collapsible">Example Settings</button>
+    <button class="collapsible">Example Content Rules</button>
     <div class="content">
         <div>
             <span class="s2">Below are some example settings to get you started that hide some bots and spam</span>
         </div>
+        <div>
+            <span class="s2">This will remove all chat content that mentions the words below, including replys</span>
+        </div>
         <span class="s2"></span>
-        <div style="background-color: #0e0f0e;border-radius: 4px;padding: 4px;white-space:pre-wrap;">StreamElements
-Streamlabs
-SoundAlerts
-Moobot
-Nightbot
-Fossabot
+        <div style="background-color: #0e0f0e;border-radius: 4px;padding: 4px;white-space:pre-wrap;">display-name=StreamElements
+display-name=Streamlabs
+display-name=SoundAlerts
+display-name=Moobot
+display-name=Nightbot
+display-name=Fossabot
 !join
 !gamble
 !following
 !followage
+!watchtime
 !links</div>
-    </div>
-    </div>
 
-    <button class="collapsible">Example Removed Content</button>
-    <div class="content">
-        <div>
+        <div style="margin-top: 10px;">
             <span class="s2">You can create rules out of any content in a removed message</span>
         </div>
         <div>
@@ -41,23 +41,11 @@ Fossabot
                 accident</span>
         </div>
         <span class="s2"></span>
-        <div style="background-color: #0e0f0e;border-radius: 4px;padding: 4px;white-space:pre-wrap;">user-type=mod
-@badge-info=founder/30;
-badges=moderator/1,founder/0,bits/1;
-color=#DAA520;
-display-name=FirstTimeEZ;
-emotes=;
-first-msg=0;
-flags=;
-mod=1;
-returning-chatter=0;
-subscriber=1;
-turbo=0;
-user-id=712351331;
-user-type=mod
-:firsttimeez!firstimeez@firsttimeez.tmi.twitch.tv
-#examplestream :@ExampleUser this is an example of a message in the chat</div>
-    </div>
+        <div style="background-color: #0e0f0e;border-radius: 4px;padding: 4px;white-space:pre-wrap;">display-name=ExampleUser // Block comments from just this user.
+user-id=712351331 // Block based on User Id
+user-type=mod // Block based on User Type
+:this is an example of a message in the chat // Block based on Comment
+ExampleUser // Blocks the word ExampleUser, including replys, users, comments, etc.</div>
     </div>
 
     <div id="container">
@@ -72,7 +60,7 @@ user-type=mod
         </div>
     </div>
 
-    <div id="container">
+    <div id="container" style="margin-top: 40px;">
         <div>
             <label class="l2">Note</label>
         </div>

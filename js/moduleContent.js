@@ -1,5 +1,5 @@
 (async () => {
-  const { CONFIG, STATE, logDebug, RequestSettings, RequestFragments } = await import(browser.runtime.getURL('') + 'js/exports.js');
+  const { CONFIG, STATE, logDebug, RequestSettings, RequestFragments } = await import(browser.runtime.getURL('') + 'js/exports/exports.js');
 
   browser.runtime.onMessage.addListener((request, sender, sendResponse) => { // Listen for messages from the BackgroundModule
     if (sender.id == CONFIG.SENDER_UUID && sender.envType == CONFIG.SCRIPTS.OPTIONS) {

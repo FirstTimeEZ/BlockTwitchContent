@@ -1,23 +1,8 @@
-import { CONFIG, STATE } from "./exports.js";
-import { broadcastToTwitchTabs, broadcastToTwitchTabsCallback } from "./exports.js";
-import { loadOptions, reloadTab, getFragments } from "./exports.js";
-import { decodeData, isValidSender, logDebug, logError } from "./exports.js";
-
-function processDecodedString(decodedString) {
-  const matches = CONFIG.REGEX.FRAGMENT.exec(decodedString);
-
-  if (matches?.length === 3) {
-    logDebug("Found Fragment Location:", matches);
-    decodedString = STATE.enabled ? insertFragmentListener(matches, decodedString) : removeFragmentListener(matches, decodedString);
-  }
-
-  if (STATE.enabled) {
-    logDebug("Encrypted Media Allowed: ", STATE.supervisorEM === false);
-    STATE.supervisorEM === true && (decodedString = decodedString.replace('n.setAttribute("allow","encrypted-media *"),', ""));
-  }
-
-  return decodedString;
-}
+import { CONFIG, STATE } from "./exports/exports.js";
+import { loadOptions, getFragments } from "./exports/exports.js";
+import { decodeData, isValidSender, logDebug, logError } from "./exports/exports.js";
+import { broadcastToTwitchTabs, broadcastToTwitchTabsCallback,  reloadTab } from "./exports/tabs.js";
+import { definedContentRules } from "./exports/content-rules.js";
 
 function insertFragmentListener(matches, decodedString) {
   const insert = createPromiseWrapper(matches);
@@ -66,7 +51,84 @@ function createPromiseWrapper(matches) {
   });`;
 }
 
-// Initialize Extension
+function processDecodedStringVendor(decodedString) {
+  const matches = CONFIG.REGEX.FRAGMENT.exec(decodedString);
+
+  if (matches?.length === 3) {
+    logDebug("Found Fragment Location:", matches);
+    decodedString = STATE.enabled ? insertFragmentListener(matches, decodedString) : removeFragmentListener(matches, decodedString);
+  }
+
+  if (STATE.enabled) {
+    logDebug("Encrypted Media Allowed: ", STATE.supervisorEM === false);
+    STATE.supervisorEM === true && (decodedString = decodedString.replace('n.setAttribute("allow","encrypted-media *"),', ""));
+  }
+
+  return decodedString;
+}
+
+function checkJS(details) {
+  if (STATE.enabled) {
+    loadOptions();
+    STATE.fragments = getFragments();
+    logDebug(`Fragments: ${STATE.fragments.length || 'No rules found in settings'}`);
+  }
+
+  const data = [];
+  const filter = browser.webRequest.filterResponseData(details.requestId);
+  const decoder = new TextDecoder(CONFIG.ENCODING);
+  const encoder = new TextEncoder();
+
+  filter.ondata = event => data.push(event.data);
+
+  filter.onstop = () => {
+    try {
+      const decodedString = decodeData(data, decoder);
+      const processedString = processDecodedStringVendor(decodedString);
+
+      filter.write(encoder.encode(processedString));
+    } catch (error) {
+      logError('Error processing request:', error);
+    } finally {
+      filter.close();
+    }
+  };
+
+}
+
+function checkGQL(details) {
+  const data = [];
+  const filter = browser.webRequest.filterResponseData(details.requestId);
+  const decoder = new TextDecoder(CONFIG.ENCODING);
+  const encoder = new TextEncoder();
+
+  filter.ondata = event => data.push(event.data);
+
+  filter.onstop = () => {
+    let str = decodeData(data, decoder);
+
+    if (str.includes(',"recentChatMessages":[{"id":')) {
+      let obj = JSON.parse(str);
+
+      for (let index = 0; index < obj.length; index++) {
+        const element = obj[index];
+        if (element.extensions.operationName === "MessageBufferChatHistory") {
+          element.data.channel.recentChatMessages = element.data.channel.recentChatMessages.filter(item => {
+            return !STATE.fragments.some(text => text != "" && (item.sender.displayName.includes(text) || item.content.text.includes(text) || definedContentRules(text, item)));
+          });
+          break;
+        }
+      }
+
+      str = JSON.stringify(obj);
+    }
+
+    filter.write(encoder.encode(str));
+
+    filter.close();
+  }
+}
+
 loadOptions();
 
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -90,36 +152,13 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 browser.webRequest.onBeforeRequest.addListener((details) => {
-  if (!details.url.endsWith(CONFIG.JS_EXT) || !CONFIG.REGEX.VENDOR.test(details.url)) {
-    return;
+  if (details.url.endsWith(CONFIG.JS_EXT) && CONFIG.REGEX.VENDOR.test(details.url)) {
+    return checkJS(details);
   }
 
-  const filter = browser.webRequest.filterResponseData(details.requestId);
-  const data = [];
-
-  if (STATE.enabled) {
-    loadOptions();
-    STATE.fragments = getFragments();
-    logDebug(`Fragments: ${STATE.fragments.length || 'No rules found in settings'}`);
+  if (details.url.startsWith("https://gql")) {
+    return checkGQL(details);
   }
-
-  const decoder = new TextDecoder(CONFIG.ENCODING);
-  const encoder = new TextEncoder();
-
-  filter.ondata = event => data.push(event.data);
-
-  filter.onstop = () => {
-    try {
-      const decodedString = decodeData(data, decoder);
-      const processedString = processDecodedString(decodedString);
-
-      filter.write(encoder.encode(processedString));
-    } catch (error) {
-      logError('Error processing request:', error);
-    } finally {
-      filter.close();
-    }
-  };
 }, { urls: ["https://*.twitch.tv/*"] }, ["blocking", "requestBody"]);
 
 browser.browserAction.onClicked.addListener(() => {
