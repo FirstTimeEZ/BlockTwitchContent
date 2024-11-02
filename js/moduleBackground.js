@@ -1,5 +1,5 @@
 import { CONFIG, C } from "./exports/constants.js";
-import { STATE } from "./exports/exports.js";
+import { STATE } from "./exports/state.js";
 import { getStorageItemStates } from "./exports/storage.js";
 import { definedContentRules } from "./exports/content-rules.js";
 import { decodeData, isValidSender, logDebug } from "./exports/util.js";

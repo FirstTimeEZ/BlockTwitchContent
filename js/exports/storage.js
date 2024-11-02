@@ -1,5 +1,5 @@
 import { CONFIG, C } from "./constants.js";
-import { STATE } from "./exports.js";
+import { STATE } from "./state.js";
 
 export function getStorageItemStates() {
   loadDebugSetting();

@@ -1,5 +1,5 @@
 import { CONFIG } from "./exports/constants.js";
-import { STATE, requestState } from "./exports/exports.js";
+import { STATE, requestState } from "./exports/state.js";
 import { debounceEvent } from "./exports/debounce.js";
 import { logDebug } from "./exports/util.js";
 

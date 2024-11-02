@@ -1,5 +1,5 @@
 (async () => {
-  const { STATE, requestState } = await import(browser.runtime.getURL('') + 'js/exports/exports.js');
+  const { STATE, requestState } = await import(browser.runtime.getURL('') + 'js/exports/state.js');
   const { CONFIG, C } = await import(browser.runtime.getURL('') + 'js/exports/constants.js');
   const { logDebug } = await import(browser.runtime.getURL('') + 'js/exports/util.js');
   
