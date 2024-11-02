@@ -2,9 +2,12 @@ import { CONFIG, UI, C, PM } from "./exports/constants.js";
 import { STATE, requestState } from "./exports/state.js";
 import { debounceEvent } from "./exports/debounce.js";
 import { logDebug } from "./exports/util.js";
+import { createDownload } from "./exports/download.js";
 
 const DOM = {
-  CONTENT_RULES: document.getElementById(CONFIG.SETTINGS.FRAGMENTS)
+  CONTENT_RULES: document.getElementById(CONFIG.SETTINGS.FRAGMENTS),
+  SETTINGS_BUTTON: document.getElementById("settingsButton"),
+  DOWNLOAD_BUTTON: document.getElementById("downloadButton"),
 }
 
 const popupSize = window.localStorage.getItem("popupSize");
@@ -56,3 +59,7 @@ DOM.CONTENT_RULES.addEventListener(UI.INPUT, debounceEvent((e) => {
 DOM.CONTENT_RULES.addEventListener(UI.MOUSE_DOWN, () => observer.observe(DOM.CONTENT_RULES, { attributes: true, attributeFilter: [UI.STYLE] }));
 
 DOM.CONTENT_RULES.addEventListener(UI.MOUSE_UP, () => { observer.takeRecords(); observer.disconnect(); });
+
+DOM.DOWNLOAD_BUTTON.addEventListener(UI.CLICK, () => debounceEvent(createDownload(STATE.fragments_storage, "fragments"), 200));
+
+//DOM.SETTINGS_BUTTON.addEventListener(UI.CLICK, (e) => {  console.log("Clicked", e);});
