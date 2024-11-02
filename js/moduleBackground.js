@@ -78,9 +78,12 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     const handlerFound = Object.keys(requestHandlers).find(key => message[key] !== undefined);
 
     if (handlerFound) {
-      const requestHandled = requestHandlers[handlerFound]();
+      const requestHandledWithResponse = requestHandlers[handlerFound]();
 
-      requestHandled ? sendResponse(requestHandled) : logDebug("backgroundModule::requestUnhandled", handlerFound);
+      requestHandledWithResponse && sendResponse(requestHandledWithResponse);
+    }
+    else {
+      logDebug("backgroundModule::validSenderUnknownMessage", sender, message);
     }
   } else {
     logDebug("backgroundModule::invalidMessage", sender);
