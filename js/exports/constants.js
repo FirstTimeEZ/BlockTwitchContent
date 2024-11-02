@@ -23,23 +23,25 @@ export const C = {
   NEW_LINE: "\n",
   NUMBER: "number",
   STRING: "string",
+  UTF_8: "utf-8",
+  JS_EXT: ".js",
+}
+
+export const CM = {
   FRAG_P: "fp",
   FRAG_F: "f",
   FRAG_W: "w",
   TWITCH: "https://www.twitch.tv",
-  CR: {
-    USER_TYPE: "user-type=",
-    USER_ID: "user-id=",
-    USER_DISPLAY_NAME: "display-name=",
-  },
-  CM: {
-    CONTENT: "contentModule",
-    LOADED: "contentModule::Loaded",
-    REFRESH: "contentModule::refreshPageRequest",
-    UNKNOWN: "contentModule::unknownMessage",
-    INVALID: "contentModule::invalidMessage",
-    MIXIN: "contentModule::mixinMessage",
-  },
-  UTF_8: "utf-8",
-  JS_EXT: ".js",
+  CONTENT: "contentModule",
+  LOADED: "contentModule::Loaded",
+  REFRESH: "contentModule::refreshPageRequest",
+  UNKNOWN: "contentModule::unknownMessage",
+  INVALID: "contentModule::invalidMessage",
+  MIXIN: "contentModule::mixinMessage",
+}
+
+export const CR = {
+  USER_TYPE: "user-type=",
+  USER_ID: "user-id=",
+  USER_DISPLAY_NAME: "display-name=",
 }

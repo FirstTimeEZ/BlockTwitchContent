@@ -1,22 +1,22 @@
-import { C } from "./constants.js";
+import { C, CR } from "./constants.js";
 
 export function definedContentRules(text, item) {
 
   const splitText = text.split(C.EQUALS);
   if (splitText.length > 1 && splitText[1] != C.EMPTY) {
-    if (text.includes(C.CR.USER_TYPE)) {
+    if (text.includes(CR.USER_TYPE)) {
       if (splitText[1].trim().includes(item.sender.__typename)) {
         return true;
       }
     }
 
-    if (text.includes(C.CR.USER_ID)) {
+    if (text.includes(CR.USER_ID)) {
       if (splitText[1].trim().includes(item.sender.id)) {
         return true;
       }
     }
 
-    if (text.includes(C.CR.USER_DISPLAY_NAME)) {
+    if (text.includes(CR.USER_DISPLAY_NAME)) {
       if (splitText[1].trim().includes(item.sender.displayName)) {
         return true;
       }
