@@ -66,9 +66,7 @@ TwitchBot
 
 ### Download List
 
-You can download the list of content rules any time by clicking the download button in the pop-up window
-
-![](https://i.imgur.com/iPD8aDE.png)
+![](https://i.imgur.com/qae1VAi.png) You can download the list of content rules any time by clicking the download button in the pop-up window
 
 ---------
 
