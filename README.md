@@ -8,7 +8,7 @@ A [`Firefox Extension`](https://addons.mozilla.org/en-US/firefox/addon/block-twi
 
 You can easily create rules by opening the pop-up in the address bar while viewing [`Twitch`](https://www.twitch.tv). 
 
-[![](https://i.imgur.com/mUVvEcd.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/)
+[![](https://i.imgur.com/mt6k4bs.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/)
 
 The list is stored locally and remains private.
 
@@ -58,19 +58,19 @@ This makes it possible to update the `Hidden Chat Content Rules` in real time in
 
 You can download the list of content rules any time by clicking the download button in the pop-up window
 
-![](https://i.imgur.com/gq38DqF.png)
+![](https://i.imgur.com/iPD8aDE.png)
 
 # Settings
 
 Additional settings and examples can be found in the `options` menu.
 
-[![](https://i.imgur.com/iUzXFNm.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/)
+[![](https://i.imgur.com/D0bxVAX.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/)
 
 # Debug Mode
 
 In debug mode, the extension will start displaying messages in the console.
 
-[![](https://i.imgur.com/QmvIpup.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/)
+[![](https://i.imgur.com/Sv1urav.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/)
 
 This information can be useful for creating rules or finding bugs.
 
