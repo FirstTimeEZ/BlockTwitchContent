@@ -4,20 +4,21 @@
     --text: #f3f4f6;
     --text-secondary: #9ca3af;
     --border: #4b5563;
+    --border-focused: #63b3ed;
     --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
     --padding: 12px;
     --border-radius: 8px;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
 }
 
 body {
     width: auto;
     height: auto;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-    background: var(--background);
-    color: var(--text);
     line-height: 1.5;
     margin: 0;
     padding: var(--padding);
+    background: var(--background);
+    color: var(--text);
 }
 
 .bodyPopup {
@@ -32,32 +33,32 @@ p {
 }
 
 pre {
-    background-color: var(--background);
     user-select: text;
+    width: 100%;
+    color: var(--text);
+    white-space: pre-wrap;
+    background-color: var(--background);
     border-radius: var(--border-radius);
     padding: var(--padding);
-    width: 100%;
-    color: #e2e8f0;
-    white-space: pre-wrap;
 }
 
 #container {
+    margin-bottom: 6px;
     border-radius: var(--border-radius);
     border: 1px solid var(--border);
     padding: var(--padding);
-    margin-bottom: 6px;
     box-shadow: var(--shadow);
     background: var(--surface);
 }
 
 .label-size {
-    font-size:large;
+    font-size: large;
     font-weight: 600;
-    color: var(--text);
     margin-bottom: 4px;
+    color: var(--text);
 }
 
-.center {
+.center-heading {
     text-align: center;
     font-size: 18px;
     font-weight: 600;
@@ -78,9 +79,9 @@ pre {
 input[type="checkbox"] {
     width: 24px;
     height: 24px;
+    cursor: pointer;
     border: 2px solid var(--border);
     border-radius: var(--border-radius);
-    cursor: pointer;
 }
 
 /* check box style */
@@ -88,45 +89,45 @@ input[type="checkbox"] {
 /* collapsible style*/
 
 .content {
-    border-radius: var(--border-radius);
     margin-top: 8px;
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.2s ease-out;
+    border-radius: var(--border-radius);
 }
 
 .collapsible-content {
+    margin-top: 8px;
+    margin-bottom: 10px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--border-radius);
-    margin-top: 8px;
-    margin-bottom: 10px;
     padding: var(--padding);
 }
 
 .collapsible {
-    background: var(--surface);
-    color: var(--text);
     cursor: pointer;
-    padding: var(--padding);
     width: 100%;
-    border: 1px solid var(--border);
-    border-radius: var(--border-radius);
     text-align: left;
     outline: none;
     font-size: 14px;
     overflow: hidden;
-    transition: background-color 0.2s;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    transition: background-color 0.2s;
+    background: var(--surface);
+    color: var(--text);
+    padding: var(--padding);
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
 }
 
 .collapsible:after {
     content: '\002B\0020 Open';
-    color: white;
     font-weight: bold;
     float: right;
+    color: var(--text);
 }
 
 .active:after {
@@ -146,26 +147,26 @@ textarea {
     width: calc(100% - 16px);
     padding-left: 6px;
     padding-right: 6px;
-    border: 1px solid var(--border);
-    border-radius: var(--border-radius);
     line-height: 1.5;
-    background: var(--surface);
-    color: var(--text);
     resize: both;
     min-width: 300px;
     min-height: 300px;
     max-width: 540px;
-    max-height: 540px;
+    max-height: 520px;
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
 }
 
 textarea:focus {
     outline: none;
-    border-color: #63b3ed;
+    border-color: var(--border-focused);
 }
 
 textarea:hover {
     outline: none;
-    border-color: #63b3ed;
+    border-color: var(--border-focused);
 }
 
 /* text area style */
@@ -179,33 +180,34 @@ textarea:hover {
 }
 
 .button {
+    top: 0;
     width: 24px;
     height: 24px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--border-radius);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 4px;
+    margin-top: 2px;
     transition: all 0.15s ease;
-    box-shadow: var(--shadow);
     position: relative;
-    top: 0;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
 }
 
 .button:active {
     transform: scale(0.95);
     box-shadow: none;
     top: 1px;
-    background-color: var(--background);
     border-color: #4299e1;
+    background-color: var(--background);
 }
 
 .button:hover {
-    background-color: var(--background);
     border-color: #63b3ed;
+    background-color: var(--background);
 }
 
 .button svg {
@@ -220,13 +222,21 @@ textarea:hover {
 
 /* button style */
 
+/* font */
+
 textarea,
 body,
 button,
 label,
 pre,
+p,
 div,
-center,
+.bodyPopup,
+.label-size,
+.center-heading,
+.collapsible,
 #container {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
+    font-family: var(--font);
 }
+
+/* font */

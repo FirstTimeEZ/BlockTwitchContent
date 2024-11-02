@@ -6,8 +6,8 @@ import { createDownload } from "./exports/download.js";
 
 const DOM = {
   CONTENT_RULES: document.getElementById(CONFIG.SETTINGS.FRAGMENTS),
-  SETTINGS_BUTTON: document.getElementById("settingsButton"),
   DOWNLOAD_BUTTON: document.getElementById("downloadButton"),
+  /*SETTINGS_BUTTON: document.getElementById("settingsButton"),*/
 }
 
 const popupSize = window.localStorage.getItem("popupSize");
