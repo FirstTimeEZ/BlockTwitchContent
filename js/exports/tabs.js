@@ -1,4 +1,4 @@
-import { logDebug, logError } from "./exports.js";
+import { logDebug, logError } from "./util.js";
 
 export const broadcastToTwitchTabs = (message) => {
   try {

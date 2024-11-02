@@ -1,7 +1,8 @@
 (async () => {
-  const { STATE, requestState, logDebug } = await import(browser.runtime.getURL('') + 'js/exports/exports.js');
+  const { STATE, requestState } = await import(browser.runtime.getURL('') + 'js/exports/exports.js');
   const { CONFIG, C } = await import(browser.runtime.getURL('') + 'js/exports/constants.js');
-
+  const { logDebug } = await import(browser.runtime.getURL('') + 'js/exports/util.js');
+  
   browser.runtime.onMessage.addListener((message, sender, sendResponse) => { // Listen for messages from the BackgroundModule
     if (sender.id == CONFIG.SENDER_UUID && sender.envType == CONFIG.SCRIPTS.OPTIONS) {
       if (message.refreshState) {
