@@ -105,6 +105,10 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
       requestHandledWithResponse && sendResponse(requestHandledWithResponse);
     }
     else {
+      if (message.pastMessagesReply) {
+        return;
+      }
+
       logDebug("backgroundModule::validSenderUnknownMessage", sender, message);
     }
   } else {

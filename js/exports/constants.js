@@ -28,7 +28,6 @@ export const commonBots = [
   "display-name=DeepBot",
   "display-name=WizeBot",
   "display-name=PhantomBot",
-  "display-name=Streamlabs Chatbot",
   "display-name=Botisimo",
   "display-name=TwitchBot"
 ];

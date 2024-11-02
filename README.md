@@ -32,7 +32,6 @@ Fossabot
 DeepBot
 WizeBot
 PhantomBot
-Streamlabs Chatbot
 Botisimo
 TwitchBot
 ```
@@ -101,8 +100,6 @@ export function createFragmentListener(matches) {
   }, 'https://www.twitch.tv').then(response => {
     if(response === 'w'){ 
       ${matches[1]}.messageProcessor.processMessage(${matches[2]}.data)
-    } else {
-      console.warn('removed message:', ${matches[2]}.data);
     }
   });`;
 }
