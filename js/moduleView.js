@@ -4,10 +4,6 @@ const DOM = {
   MESSAGES: document.getElementsByClassName("messages"),
 }
 
-requestState("viewModule");
-
-browser.runtime.sendMessage({ requestPastMessages: true });
-
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.pastMessagesReply) {
     if (message.pastMessagesReply == undefined || message.pastMessagesReply.length == 0) {
@@ -25,4 +21,8 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
   }
 });
+
+browser.runtime.sendMessage({ requestPastMessages: true });
+
+requestState("viewModule");
 
