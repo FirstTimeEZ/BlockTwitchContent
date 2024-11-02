@@ -1,10 +1,12 @@
 :root {
-    --background: #060607;
+    --background: #101013;
     --surface: #151618;
     --text: #f3f4f6;
     --text-secondary: #9ca3af;
     --border: #4b5563;
     --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+    --padding: 12px;
+    --border-radius: 8px;
 }
 
 body {
@@ -15,7 +17,12 @@ body {
     color: var(--text);
     line-height: 1.5;
     margin: 0;
-    padding: 16px;
+    padding: var(--padding);
+}
+
+.bodyPopup {
+    max-width: 600px;
+    max-height: 600px;
 }
 
 p {
@@ -25,26 +32,26 @@ p {
 }
 
 pre {
-    background-color: #0c0c0e;
+    background-color: var(--background);
     user-select: text;
-    border-radius: 4px;
-    padding: 12px;
+    border-radius: var(--border-radius);
+    padding: var(--padding);
     width: 100%;
     color: #e2e8f0;
     white-space: pre-wrap;
 }
 
 #container {
-    border-radius: 8px;
+    border-radius: var(--border-radius);
     border: 1px solid var(--border);
-    padding: 12px;
+    padding: var(--padding);
     margin-bottom: 6px;
     box-shadow: var(--shadow);
     background: var(--surface);
 }
 
 .content {
-    border-radius: 8px;
+    border-radius: var(--border-radius);
     margin-top: 8px;
     max-height: 0;
     overflow: hidden;
@@ -54,20 +61,20 @@ pre {
 .collapsible-content {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: var(--border-radius);
     margin-top: 8px;
     margin-bottom: 10px;
-    padding: 12px;
+    padding: var(--padding);
 }
 
 .collapsible {
     background: var(--surface);
     color: var(--text);
     cursor: pointer;
-    padding: 12px;
+    padding: var(--padding);
     width: 100%;
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: var(--border-radius);
     text-align: left;
     outline: none;
     font-size: 14px;
@@ -94,16 +101,30 @@ pre {
 }
 
 textarea {
-    width: calc(100% - 26px);
-    padding: 12px;
+    overflow: scroll;
+    width: calc(100% - 16px);
+    padding-left: 6px;
+    padding-right: 6px;
     border: 1px solid var(--border);
-    border-radius: 6px;
-    font-family: monospace;
-    font-size: 14px;
+    border-radius: var(--border-radius);
     line-height: 1.5;
     background: var(--surface);
     color: var(--text);
-    resize: none;
+    resize: both;
+    min-width: 300px;
+    min-height: 300px;
+    max-width: 540px;
+    max-height: 540px;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: #63b3ed;
+}
+
+textarea:hover {
+    outline: none;
+    border-color: #63b3ed;
 }
 
 .checkbox-wrapper {
@@ -117,7 +138,7 @@ input[type="checkbox"] {
     width: 16px;
     height: 16px;
     border: 2px solid var(--border);
-    border-radius: 4px;
+    border-radius: var(--border-radius);
     cursor: pointer;
 }
 
@@ -132,6 +153,17 @@ input[type="checkbox"] {
     font-size: 18px;
     font-weight: 600;
     margin-bottom: 4px;
-    margin-top:-10px;
+    margin-top: -10px;
     color: var(--text);
+}
+
+textarea,
+body,
+button,
+label,
+pre,
+div,
+center,
+#container {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
 }

@@ -8,7 +8,7 @@ A [`Firefox Extension`](https://addons.mozilla.org/en-US/firefox/addon/block-twi
 
 You can easily create rules by opening the pop-up in the address bar while viewing [`Twitch`](https://www.twitch.tv). 
 
-[![](https://i.imgur.com/vBlm6hn.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/)
+[![](https://i.imgur.com/Lcel773.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/)
 
 The list is stored locally and remains private.
 
