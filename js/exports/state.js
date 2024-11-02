@@ -5,7 +5,9 @@ export const STATE = {
   enabled: true,
   debug: false,
   supervisorEM: false,
-  fragments_storage: ""
+  fragments_storage: "",
+  hideBots: false,
+  hideCommands: false
 };
 
 export function requestState(who, func) {
@@ -17,6 +19,8 @@ export function requestState(who, func) {
         STATE.fragments = response.state.fragments;
         STATE.fragments_storage = response.state.fragments_storage;
         STATE.supervisorEM = response.state.supervisorEM;
+        STATE.hideBots = response.state.hideBots;
+        STATE.hideCommands = response.state.hideCommands;
 
         logDebug(who + "::refreshState", STATE);
 

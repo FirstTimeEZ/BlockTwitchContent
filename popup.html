@@ -12,7 +12,7 @@
     <div class="center-heading">Hidden Chat Content</div>
     <textarea id="fragments" rows="13" cols="30"></textarea>
     <div class="button-container">
-        <button id="downloadButton" class="button">
+        <button id="downloadButton" class="button" title="Download Content Rules">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -20,6 +20,37 @@
                 <line x1="12" y1="15" x2="12" y2="3" />
             </svg>
         </button>
+        <div class="toggle-button">
+            <input type="checkbox" id="hideBots">
+            <label for="hideBots" title="Hide Common Bot Spam">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="5" y="5" width="14" height="14" rx="2" />
+                    <circle cx="9" cy="10" r="1" />
+                    <circle cx="15" cy="10" r="1" />
+                    <path d="M8 15h8" />
+                    <path d="M12 5v-2" />
+                    <path d="M5 12h-2" />
+                    <path d="M21 12h-2" />
+                    <line x1="2" y1="2" x2="22" y2="22" />
+                </svg>
+            </label>
+        </div>
+        <div class="toggle-button">
+            <input type="checkbox" id="hideCommands">
+            <label for="hideCommands" title="Hide Common Command Spam">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="16" rx="2" />
+                    <line x1="3" y1="8" x2="21" y2="8" />
+                    <circle cx="6" cy="6" r="1" />
+                    <circle cx="9" cy="6" r="1" />
+                    <path d="M7 13l3 3" />
+                    <path d="M10 13l-3 3" />
+                    <line x1="2" y1="2" x2="22" y2="22" />
+                </svg>
+            </label>
+        </div>
         <!-- <button id="settingsButton" class="button">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

@@ -7,7 +7,9 @@ export const CONFIG = {
   SETTINGS: {
     FRAGMENTS: "fragments",
     DEBUG: "debugEnabled",
-    ENCRYPTED_MEDIA: "encryptedMedia"
+    ENCRYPTED_MEDIA: "encryptedMedia",
+    HIDE_BOTS: "hideBots",
+    HIDE_COMMANDS: "hideCommands",
   },
   REGEX: {
     FRAGMENT: /([A-Za-z])\.messageProcessor\.processMessage\(([A-Za-z])\.data\)/,
@@ -15,6 +17,38 @@ export const CONFIG = {
   },
   DEBOUNCE_MS: 750,
 };
+
+export const commonBots = [
+  "display-name=StreamElements",
+  "display-name=Streamlabs",
+  "display-name=SoundAlerts",
+  "display-name=Moobot",
+  "display-name=Nightbot",
+  "display-name=Fossabot",
+  "display-name=DeepBot",
+  "display-name=WizeBot",
+  "display-name=PhantomBot",
+  "display-name=Streamlabs Chatbot",
+  "display-name=Botisimo",
+  "display-name=TwitchBot"
+];
+
+export const commonCommands = [
+  "!join",
+  "!gamble",
+  "!following",
+  "!followage",
+  "!links",
+  "!points",
+  "!hype",
+  "!uptime",
+  "!commands",
+  "!watchtime",
+  "!socials",
+  "!donate",
+  "!schedule",
+  "!vote"
+];
 
 export const C = {
   EQUALS: "=",
@@ -26,7 +60,7 @@ export const C = {
   UTF_8: "utf-8",
   JS_EXT: ".js",
   MAIN: "main_frame",
-  PX : "px",
+  PX: "px",
 }
 
 export const CM = {

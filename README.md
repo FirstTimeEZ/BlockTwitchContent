@@ -8,9 +8,56 @@ A [`Firefox Extension`](https://addons.mozilla.org/en-US/firefox/addon/block-twi
 
 You can easily create rules by opening the pop-up in the address bar while viewing [`Twitch`](https://www.twitch.tv). 
 
-[![](https://i.imgur.com/mt6k4bs.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/)
+[![](https://i.imgur.com/fmsPzih.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/)
 
 The list is stored locally and remains private.
+
+# Hide Common Spam
+
+You can hide common spam by clicking the toggle buttons in the pop-up window
+
+![](https://i.imgur.com/SdKimXl.png)
+
+### Bots
+
+![](https://i.imgur.com/ohl4bFJ.png) Content containing the words below will be removed from chat if the `Hide Bots` setting is active
+
+```
+StreamElements
+Streamlabs
+SoundAlerts
+Moobot
+Nightbot
+Fossabot
+DeepBot
+WizeBot
+PhantomBot
+Streamlabs Chatbot
+Botisimo
+TwitchBot
+```
+
+### Commands
+
+![](https://i.imgur.com/UXkrU4E.png) Content containing the words below will be removed from chat if the `Hide Commands` setting is active
+
+```
+!join
+!gamble
+!following
+!followage
+!links
+!points
+!hype
+!uptime
+!commands
+!watchtime
+!socials
+!donate
+!schedule
+!vote
+```
+
 
 # How does it work
 

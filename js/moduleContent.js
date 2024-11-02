@@ -1,6 +1,6 @@
 (async () => {
   const { STATE, requestState } = await import(browser.runtime.getURL('') + 'js/exports/state.js');
-  const { CONFIG, C, CM, URI, UI } = await import(browser.runtime.getURL('') + 'js/exports/constants.js');
+  const { CONFIG, C, CM, URI, UI, commonBots, commonCommands } = await import(browser.runtime.getURL('') + 'js/exports/constants.js');
   const { logDebug } = await import(browser.runtime.getURL('') + 'js/exports/util.js');
 
   browser.runtime.onMessage.addListener((message, sender, sendResponse) => { // Listen for messages from the BackgroundModule
@@ -35,8 +35,17 @@
 
       logDebug(CM.MIXIN, event.data.text, event.data.random);
 
-      const isFragmentMatched = STATE.fragments.some(frag => frag !== C.EMPTY && event.data.text.includes(frag));
-      window.postMessage({ response: isFragmentMatched ? CM.FRAG_F : CM.FRAG_W, completed: true, random: event.data.random }, URI.TWITCH); // Content Script -> Web Page Mixin
+      let matched = STATE.fragments.some(frag => frag !== C.EMPTY && event.data.text.includes(frag));
+
+      if (!matched) {
+        matched = (STATE.hideCommands && commonCommands.some(frag => frag !== C.EMPTY && event.data.text.includes(frag)));
+
+        if (!matched) {
+          matched = (STATE.hideBots && commonBots.some(frag => frag !== C.EMPTY && event.data.text.includes(frag)));
+        }
+      }
+
+      window.postMessage({ response: matched ? CM.FRAG_F : CM.FRAG_W, completed: true, random: event.data.random }, URI.TWITCH); // Content Script -> Web Page Mixin
     }
   });
 

@@ -1,4 +1,4 @@
-import { CONFIG, C, URI, ICON } from "./exports/constants.js";
+import { CONFIG, C, URI, ICON, commonBots, commonCommands } from "./exports/constants.js";
 import { STATE } from "./exports/state.js";
 import { getStorageItemStates } from "./exports/storage.js";
 import { definedContentRules } from "./exports/content-rules.js";
@@ -56,11 +56,26 @@ function checkGQL(details) {
       for (let index = 0; index < json.length; index++) {
         const element = json[index];
         if (element.extensions.operationName === "MessageBufferChatHistory") {
-          element.data.channel.recentChatMessages = element.data.channel.recentChatMessages.filter(chatMessage =>
-            !STATE.fragments.some(fragment => fragment.length > 1
-              && (chatMessage.sender.displayName.includes(fragment)
-                || chatMessage.content.text.includes(fragment)
-                || definedContentRules(fragment, chatMessage))));
+          element.data.channel.recentChatMessages = element.data.channel.recentChatMessages.filter(chatMessage => {
+
+            if (STATE.fragments.some(fragment => fragment.length > 1 && (chatMessage.sender.displayName.includes(fragment) || chatMessage.content.text.includes(fragment) || definedContentRules(fragment, chatMessage)))) {
+              return false;
+            }
+
+            if (STATE.hideBots) {
+              if (commonBots.some(fragment => fragment.length > 1 && (chatMessage.sender.displayName.includes(fragment) || chatMessage.content.text.includes(fragment) || definedContentRules(fragment, chatMessage)))) {
+                return false;
+              }
+            }
+
+            if (STATE.hideCommands) {
+              if (commonCommands.some(fragment => fragment.length > 1 && (chatMessage.sender.displayName.includes(fragment) || chatMessage.content.text.includes(fragment) || definedContentRules(fragment, chatMessage)))) {
+                return false;
+              }
+            }
+
+            return true;
+          });
           break;
         }
       }

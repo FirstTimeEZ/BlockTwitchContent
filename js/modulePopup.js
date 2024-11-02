@@ -6,6 +6,8 @@ import { createDownload } from "./exports/download.js";
 
 const DOM = {
   CONTENT_RULES: document.getElementById(CONFIG.SETTINGS.FRAGMENTS),
+  HIDE_BOTS: document.getElementById(CONFIG.SETTINGS.HIDE_BOTS),
+  HIDE_COMMANDS: document.getElementById(CONFIG.SETTINGS.HIDE_COMMANDS),
   DOWNLOAD_BUTTON: document.getElementById("downloadButton"),
   /*SETTINGS_BUTTON: document.getElementById("settingsButton"),*/
 }
@@ -29,6 +31,8 @@ document.addEventListener(UI.DOM_LOADED, () => {
     }
     else {
       DOM.CONTENT_RULES.value = STATE.fragments_storage;
+      DOM.HIDE_BOTS.checked = STATE.hideBots;
+      DOM.HIDE_COMMANDS.checked = STATE.hideCommands;
     }
   });
 });
@@ -60,6 +64,21 @@ DOM.CONTENT_RULES.addEventListener(UI.MOUSE_DOWN, () => observer.observe(DOM.CON
 
 DOM.CONTENT_RULES.addEventListener(UI.MOUSE_UP, () => { observer.takeRecords(); observer.disconnect(); });
 
-DOM.DOWNLOAD_BUTTON.addEventListener(UI.CLICK, () => debounceEvent(createDownload(STATE.fragments_storage, "fragments"), 200));
+DOM.DOWNLOAD_BUTTON.addEventListener(UI.CLICK, () => debounceEvent(createDownload(STATE.fragments_storage, CONFIG.SETTINGS.FRAGMENTS), 200));
 
+DOM.HIDE_BOTS.addEventListener(UI.CLICK, (e) => {
+  if (e.target.checked !== null) {
+    STATE.hideBots = e.target.checked;
+    window.localStorage.setItem(CONFIG.SETTINGS.HIDE_BOTS, STATE.hideBots);
+    browser.runtime.sendMessage({ requestForStateUpdate: true });
+  }
+});
+
+DOM.HIDE_COMMANDS.addEventListener(UI.CLICK, (e) => {
+  if (e.target.checked !== null) {
+    STATE.hideCommands = e.target.checked;
+    window.localStorage.setItem(CONFIG.SETTINGS.HIDE_COMMANDS, STATE.hideCommands);
+    browser.runtime.sendMessage({ requestForStateUpdate: true });
+  }
+});
 //DOM.SETTINGS_BUTTON.addEventListener(UI.CLICK, (e) => {  console.log("Clicked", e);});

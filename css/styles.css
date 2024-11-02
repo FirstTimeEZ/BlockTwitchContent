@@ -151,9 +151,9 @@ textarea {
     width: calc(100% - 16px);
     resize: both;
     min-width: 300px;
-    min-height: 300px;
+    min-height: 100px;
     max-width: 540px;
-    max-height: 520px;
+    max-height: 510px;
     color: var(--text);
     background: var(--surface);
     line-height: var(--line-height);
@@ -177,16 +177,10 @@ textarea:hover {
 
 /* button style */
 
-.button-container {
-    display: flex;
-    align-items: center;
-    gap: var(--padding-small);
-}
-
 .button {
     top: 0;
-    width: 24px;
-    height: 24px;
+    width: var(--button-size);
+    height: var(--button-size);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -201,8 +195,14 @@ textarea:hover {
     border-radius: var(--border-radius);
 }
 
+.button-container {
+    display: flex;
+    align-items: center;
+    gap: var(--padding-small);
+}
+
 .button:active {
-    transform: scale(0.95);
+    transform: scale(0.96);
     box-shadow: none;
     top: 1px;
     border-color: var(--border-focused);
@@ -215,16 +215,60 @@ textarea:hover {
 }
 
 .button svg {
-    width: 100%;
-    height: 100%;
+    width: 24px;
+    height: 24px;
     stroke: var(--text);
 }
 
-.button:active svg {
-    transform: translateY(1px);
+/* button style */
+
+/* toggle button */
+
+.toggle-button {
+    position: relative;
+    display: inline-block;
 }
 
-/* button style */
+.toggle-button input[type="checkbox"] {
+    display: none;
+}
+
+.toggle-button label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--button-size);
+    height: var(--button-size);
+    cursor: pointer;
+    margin-top: 2px;
+    transition: all 0.15s ease;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    padding: var(--padding-small);
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
+}
+
+.toggle-button label:hover {
+    border-color: var(--border-focused);
+    background-color: var(--background);
+}
+
+.toggle-button input[type="checkbox"]:checked+label {
+    transform: scale(0.96);
+    background-color: var(--background);
+    border-color: var(--border-focused);
+    box-shadow: none;
+    top: 1px;
+}
+
+.toggle-button label svg {
+    width: 24px;
+    height: 24px;
+    stroke: var(--text);
+}
+
+/* toggle button */
 
 /* font */
 
