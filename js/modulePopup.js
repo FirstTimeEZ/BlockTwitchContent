@@ -40,3 +40,15 @@ DOM.CONTENT_RULES.addEventListener(UI.INPUT, debounceEvent((e) => {
     browser.runtime.sendMessage({ requestForStateUpdate: true }); // PopupModule -> BackgroundModule
   }
 }, CONFIG.DEBOUNCE_MS));
+
+var popupSize = window.localStorage.getItem("popupSize");
+if (popupSize !== null) {
+  const json = JSON.parse(popupSize);
+
+  DOM.CONTENT_RULES.style.width = json.w;
+  DOM.CONTENT_RULES.style.height = json.h;
+}
+
+new MutationObserver(debounceEvent(() => {
+  DOM.CONTENT_RULES != undefined && window.localStorage.setItem("popupSize", JSON.stringify({ w: DOM.CONTENT_RULES.style.width, h: DOM.CONTENT_RULES.style.height }));
+}, 250)).observe(DOM.CONTENT_RULES, { attributes: true, attributeFilter: ['style'] });
