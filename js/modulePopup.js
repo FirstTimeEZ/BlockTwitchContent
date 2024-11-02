@@ -55,4 +55,4 @@ DOM.CONTENT_RULES.addEventListener(UI.INPUT, debounceEvent((e) => {
 
 DOM.CONTENT_RULES.addEventListener(UI.MOUSE_DOWN, () => observer.observe(DOM.CONTENT_RULES, { attributes: true, attributeFilter: [UI.STYLE] }));
 
-DOM.CONTENT_RULES.addEventListener(UI.MOUSE_UP, () => observer.disconnect());
+DOM.CONTENT_RULES.addEventListener(UI.MOUSE_UP, () => { observer.takeRecords(); observer.disconnect(); });
