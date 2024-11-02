@@ -25,13 +25,14 @@ export const C = {
   STRING: "string",
   UTF_8: "utf-8",
   JS_EXT: ".js",
+  MAIN: "main_frame",
+  PX : "px",
 }
 
 export const CM = {
   FRAG_P: "fp",
   FRAG_F: "f",
   FRAG_W: "w",
-  TWITCH: "https://www.twitch.tv",
   CONTENT: "contentModule",
   LOADED: "contentModule::Loaded",
   REFRESH: "contentModule::refreshPageRequest",
@@ -40,8 +41,35 @@ export const CM = {
   MIXIN: "contentModule::mixinMessage",
 }
 
+export const URI = {
+  TWITCH: "https://www.twitch.tv/",
+  TWITCH_WC: "https://*.twitch.tv/*",
+  TWITCH_GQL: "https://gql.twitch.tv/",
+  BLOCKING: "blocking",
+  REQUEST_BODY: "requestBody",
+}
+
 export const CR = {
   USER_TYPE: "user-type=",
   USER_ID: "user-id=",
   USER_DISPLAY_NAME: "display-name=",
+}
+
+export const PM = {
+  POPUP: "popupModule",
+  DESTROYED: "popupModule::domDestroyed",
+}
+
+export const ICON = {
+  ENABLED: "icons/icon-e.png",
+  DISABLED: "icons/icon-d.png"
+}
+
+export const UI = {
+  CLICK: "click",
+  INPUT: "input",
+  ACTIVE: "active",
+  MESSAGE: "message",
+  UNLOAD: "unload",
+  DOM_LOADED: "DOMContentLoaded",
 }

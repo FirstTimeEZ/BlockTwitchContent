@@ -1,8 +1,8 @@
 (async () => {
   const { STATE, requestState } = await import(browser.runtime.getURL('') + 'js/exports/state.js');
-  const { CONFIG, C, CM } = await import(browser.runtime.getURL('') + 'js/exports/constants.js');
+  const { CONFIG, C, CM, URI, UI } = await import(browser.runtime.getURL('') + 'js/exports/constants.js');
   const { logDebug } = await import(browser.runtime.getURL('') + 'js/exports/util.js');
-  
+
   browser.runtime.onMessage.addListener((message, sender, sendResponse) => { // Listen for messages from the BackgroundModule
     if (sender.id == CONFIG.SENDER_UUID && sender.envType == CONFIG.SCRIPTS.OPTIONS) {
       if (message.refreshState) {
@@ -22,7 +22,7 @@
     }
   });
 
-  window.addEventListener("message", (event) => { // Listen for Messages from the Web Page Mixin
+  window.addEventListener(UI.MESSAGE, (event) => { // Listen for Messages from the Web Page Mixin
     if (STATE.enabled && event.data.completed === undefined
       && event.data.text != undefined
       && event.data.type != undefined
@@ -36,7 +36,7 @@
       logDebug(CM.MIXIN, event.data.text, event.data.random);
 
       const isFragmentMatched = STATE.fragments.some(frag => frag !== C.EMPTY && event.data.text.includes(frag));
-      window.postMessage({ response: isFragmentMatched ? CM.FRAG_F : CM.FRAG_W, completed: true, random: event.data.random }, CM.TWITCH); // Content Script -> Web Page Mixin
+      window.postMessage({ response: isFragmentMatched ? CM.FRAG_F : CM.FRAG_W, completed: true, random: event.data.random }, URI.TWITCH); // Content Script -> Web Page Mixin
     }
   });
 

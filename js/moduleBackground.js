@@ -1,4 +1,4 @@
-import { CONFIG, C } from "./exports/constants.js";
+import { CONFIG, C, URI, ICON } from "./exports/constants.js";
 import { STATE } from "./exports/state.js";
 import { getStorageItemStates } from "./exports/storage.js";
 import { definedContentRules } from "./exports/content-rules.js";
@@ -30,7 +30,7 @@ function checkVendor(details) {
 
     if (STATE.enabled) {
       logDebug("backgroundModule::encryptedMediaAllowed", STATE.supervisorEM === false);
-      STATE.supervisorEM === true && (decodedString = decodedString.replace('n.setAttribute("allow","encrypted-media *"),', ""));
+      STATE.supervisorEM === true && (decodedString = decodedString.replace('n.setAttribute("allow","encrypted-media *"),', C.EMPTY));
     }
 
     filter.write(encoder.encode(decodedString));
@@ -92,7 +92,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 browser.webRequest.onBeforeRequest.addListener((details) => {
-  if (STATE.enabled && details.type == "main_frame") {
+  if (STATE.enabled && details.type == C.MAIN) {
     getStorageItemStates();
     console.log(`backgroundModule::` + (STATE.fragments.length > 0 ? `contentRulesLoaded` : 'contentRulesNotFound'), STATE.fragments.length);
     return {};
@@ -102,10 +102,10 @@ browser.webRequest.onBeforeRequest.addListener((details) => {
     return checkVendor(details);
   }
 
-  if (details.url.startsWith("https://gql")) {
+  if (details.url.startsWith(URI.TWITCH_GQL)) {
     return checkGQL(details);
   }
-}, { urls: ["https://*.twitch.tv/*"] }, ["blocking", "requestBody"]);
+}, { urls: [URI.TWITCH_WC] }, [URI.BLOCKING, URI.REQUEST_BODY]);
 
 browser.browserAction.onClicked.addListener(() => {
   STATE.enabled = !STATE.enabled;
@@ -114,7 +114,7 @@ browser.browserAction.onClicked.addListener(() => {
 
   browser.browserAction.setIcon({
     path: {
-      256: STATE.enabled ? "icons/icon-e.png" : "icons/icon-d.png"
+      256: STATE.enabled ? ICON.ENABLED : ICON.DISABLED
     }
   });
 
