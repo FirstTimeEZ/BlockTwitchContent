@@ -3,141 +3,134 @@ body {
     width: auto;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
     padding: 10px;
     margin: 0;
-    background: black;
+    background: #1a1b1e;
     border-radius: 4px;
-}
-
-button {
-    width: 100%;
-    padding: 5px 6px;
-    margin-top: 3px;
-    margin-bottom: 3px;
-    align-self: center;
-    border: none;
-    border-radius: 4px;
-    background-color: gray;
-    color: white;
-    cursor: pointer;
+    color: #e2e8f0;
 }
 
 textarea {
     resize: none;
     border-radius: 4px;
+    background-color: #0f1114;
+    color: #e2e8f0;
+    border: 1px solid #323741;
+    padding: 8px;
+    width: calc(100% - 16px);
 }
 
-button, textarea, label {
-    font-family: Arial, sans-serif; /* Set your desired font family */
-    font-size: 16px; /* Set your desired font size */
-    font-weight: normal; /* Set your desired font weight */
+textarea:focus {
+    outline: none;
+    border-color: #63b3ed;
 }
 
-div {
+p {
+    margin-bottom: 0px;
+    margin-top: 0px;
+    padding: 0%;
+}
+
+pre {
+    background-color: #0c0c0e;
+    user-select: text;
+    border-radius: 4px;
+    padding: 12px;
+    width: 100%;
+    color: #e2e8f0;
+    white-space: pre-wrap;
+}
+
+#container {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
+    background-color: #0c0c0e;
+    border-radius: 4px;
+    margin: 8px 0;
+    padding: 12px;
     width: 100%;
-    height: 100%;
+    display: flex;
 }
 
-.divBlock {
+.checkbox-wrapper {
+    gap: 8px;
+    margin: 10px 0;
     display: block;
-    width: 100%;
-    height: 100%;
 }
 
-.l2{
-    color: white;
-}
-
-span {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 95%;
-    height: 20px;
-    background: gray;
-    border-radius: 4px;
-    margin-top: 1px;
-    margin-bottom: 1cqw;
-}
-
-.ez1 {
-    width: 195px;
-    height: 30px;
-    padding: 5px 6px;
-    margin-top: 1px;
-    margin-bottom: 1px;
-    border: none;
-    border-radius: 4px;
-    background-color: #4CAF50;
-    color: white;
-    cursor: pointer;
-    float: left;
-}
-
-.ez2 {
-    width: 29%;
-    height: 30px;
-    padding: 5px 6px;
-    margin-top: 1px;
-    margin-bottom: 1px;
-    border: none;
-    border-radius: 4px;
-    background-color: gray;
-    color: white;
-    cursor: pointer;
-    float: right;
-}
-
-.ez3 {
-    width: 40px;
-    height: 30px;
-    margin-top: 1px;
-    margin-bottom: 1px;
-    border: none;
-    border-radius: 4px;
-    background-color: #4CAF50;
-    color: white;
-    cursor: pointer;
-    float: right;
-}
-
-.ez3:hover {
-    background-color: #45a049;
-}
-
-.ez7 {
-    width: 40px;
-    height: 30px;
-    margin-top: 1px;
-    margin-bottom: 1px;
-    border: none;
-    border-radius: 4px;
-    background-color: #4CAF50;
-    color: white;
-    cursor: pointer;
-    float: right;
-}
-
-.ez7:hover {
-    background-color: #45a049;
-}
-
-.ez4 {
+.checkbox-size {
     width: 20px;
     height: 20px;
-    padding: 0px;
-    align-content: center;
-    vertical-align: middle;
-    margin: 0px;
+    margin: 0;
 }
 
-.ez5 {
-    margin-right: 2px;
+.label-size {
+    font-size: large;
+}
+
+#container div:first-child {
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.content {
+    width: 100%;
+    align-self: center;
+    align-content: center;
+    text-align: center;
+    margin-bottom: 4px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+}
+
+.collapsible {
+    background-color: #151615;
+    color: white;
+    cursor: pointer;
+    padding: 12px;
+    width: 100%;
+    height: auto;
+    border: none;
+    align-self: center;
+    align-content: center;
+    text-align: center;
+    outline: none;
+    font-size: 15px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.active,
+.collapsible:hover {
+    background-color: #151615;
+}
+
+.collapsible:after {
+    content: '\002B\0020 Open';
+    color: white;
+    font-weight: bold;
+    float: right;
+    margin-left: 5px;
+}
+
+.active:after {
+    content: "\2212\0020 Close";
+}
+
+textarea,
+body,
+button,
+label,
+pre,
+div,
+#container {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
+}
+
+.center {
+    align-content: center;
+    display: flex;
+    justify-content: center;
 }

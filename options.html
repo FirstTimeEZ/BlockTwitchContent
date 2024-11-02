@@ -1,23 +1,20 @@
 <!DOCTYPE html>
-
-<html>
+<html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="chrome://global/skin/in-content/common.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Rules</title>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
     <button class="collapsible">Example Content Rules</button>
     <div class="content">
-        <div>
-            <span class="s2">Below are some example settings to get you started that hide some bots and spam</span>
-        </div>
-        <div>
-            <span class="s2">This will remove all chat content that mentions the words below, including replys</span>
-        </div>
-        <span class="s2"></span>
-        <div style="background-color: #0e0f0e;border-radius: 4px;padding: 4px;white-space:pre-wrap;">display-name=StreamElements
+        <p>Below are some example settings to get you started that hide some bots and spam</p>
+        <p>This will remove all chat content that mentions the words below, including replys</p>
+
+        <pre>display-name=StreamElements
 display-name=Streamlabs
 display-name=SoundAlerts
 display-name=Moobot
@@ -28,136 +25,39 @@ display-name=Fossabot
 !following
 !followage
 !watchtime
-!links</div>
+!links</pre>
 
-        <div style="margin-top: 10px;">
-            <span class="s2">You can create rules out of any content in a removed message</span>
-        </div>
-        <div>
-            <span class="s2">Removed messages can be found in the console as warnings</span>
-        </div>
-        <div>
-            <span class="s2">The more specific you make a rule the less likely it will match on something by
-                accident</span>
-        </div>
-        <span class="s2"></span>
-        <div style="background-color: #0e0f0e;border-radius: 4px;padding: 4px;white-space:pre-wrap;">display-name=ExampleUser // Block comments from just this user.
+        <p>You can create rules out of any content in a removed message</p>
+        <p>Removed messages can be found in the console as warnings</p>
+        <p>The more specific you make a rule the less likely it will match on something by accident</p>
+
+        <pre>display-name=ExampleUser // Block comments from just this user.
 user-id=712351331 // Block based on User Id
 user-type=mod // Block based on User Type
 :this is an example of a message in the chat // Block based on Comment
-ExampleUser // Blocks the word ExampleUser, including replys, users, comments, etc.</div>
+ExampleUser // Blocks the word ExampleUser, including replys, users, comments, etc.</pre>
     </div>
 
     <div id="container">
-        <div>
-            <label class="l2">
-                <input name="debugEnabled" type="checkbox" />
-                Debug Enabled
-            </label>
+        <div class="checkbox-wrapper">
+            <input type="checkbox" id="debugEnabled" class="checkbox-size">
+            <label for="debugEnabled" class="label-size">Debug Enabled</label>
         </div>
-        <div>
-            <span class="s2">Enable extra output that could be useful if there are errors</span>
-        </div>
-    </div>
-
-    <div id="container" style="margin-top: 40px;">
-        <div>
-            <label class="l2">Note</label>
-        </div>
-        <div>
-            <span class="s2">A page refresh is required after you change the settings below</span>
-        </div>
+        <p>Enable extra output that could be useful if there are errors</p>
     </div>
 
     <div id="container">
-        <div>
-            <label class="l2">
-                <input name="encryptedMedia" type="checkbox" checked="true" />
-                No Encrypted Media
-            </label>
-        </div>
-        <div>
-            <span class="s2">Do not allow the supervisor to use encrypted media</span>
-        </div>
+        <div class="label-size">Note</div>
+        <p>A page refresh is required after you change the settings below</p>
     </div>
 
-    <style>
-        #container {
-            margin-bottom: 10px;
-        }
-
-        div {
-            user-select: text;
-        }
-
-        span {
-            user-select: text;
-        }
-
-        body {
-            height: auto;
-            background: var(--in-content-box-background);
-            color: white !important;
-            user-select: text;
-        }
-
-        #input {
-            user-select: text;
-        }
-
-        .s2 {
-            margin-left: 6px;
-            user-select: text;
-        }
-
-        .l2 {
-            font-size: medium;
-        }
-
-        .collapsible {
-            background-color: #151615;
-            color: white;
-            cursor: pointer;
-            padding: 18px;
-            width: 95%;
-            border: none;
-            align-self: center;
-            align-content: center;
-            text-align: center;
-            outline: none;
-            font-size: 15px;
-            margin-bottom: 10px;
-        }
-
-        .active,
-        .collapsible:hover {
-            background-color: #151615;
-        }
-
-        .collapsible:after {
-            content: '\002B\0020 Open';
-            color: white;
-            font-weight: bold;
-            float: right;
-            margin-left: 5px;
-        }
-
-        .active:after {
-            content: "\2212\0020 Close";
-        }
-
-        .content {
-            width: 95%;
-            align-self: center;
-            align-content: center;
-            text-align: center;
-            padding: 0 18px;
-            margin-bottom: 4px;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.2s ease-out;
-        }
-    </style>
+    <div id="container">
+        <div class="checkbox-wrapper">
+            <input type="checkbox" id="encryptedMedia" class="checkbox-size">
+            <label for="encryptedMedia" class="label-size">No Encrypted Media</label>
+        </div>
+        <p>Do not allow the supervisor to use encrypted media</p>
+    </div>
 
     <script src="js/moduleOptions.js" type="module"></script>
 </body>
