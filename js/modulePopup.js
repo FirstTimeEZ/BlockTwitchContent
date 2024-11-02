@@ -7,6 +7,18 @@ const DOM = {
   CONTENT_RULES: document.getElementById(CONFIG.SETTINGS.FRAGMENTS)
 }
 
+const popupSize = window.localStorage.getItem("popupSize");
+if (popupSize !== null) {
+  const json = JSON.parse(popupSize);
+
+  DOM.CONTENT_RULES.style.width = json.w;
+  DOM.CONTENT_RULES.style.height = json.h;
+}
+
+const observer = new MutationObserver(debounceEvent(() => {
+  DOM.CONTENT_RULES != undefined && window.localStorage.setItem("popupSize", JSON.stringify({ w: DOM.CONTENT_RULES.style.width, h: DOM.CONTENT_RULES.style.height }));
+}, 250)).observe(DOM.CONTENT_RULES, { attributes: true, attributeFilter: [UI.STYLE] });
+
 document.addEventListener(UI.DOM_LOADED, () => {
   requestState(PM.POPUP, () => {
     if (!STATE.enabled) {
@@ -41,14 +53,6 @@ DOM.CONTENT_RULES.addEventListener(UI.INPUT, debounceEvent((e) => {
   }
 }, CONFIG.DEBOUNCE_MS));
 
-var popupSize = window.localStorage.getItem("popupSize");
-if (popupSize !== null) {
-  const json = JSON.parse(popupSize);
+DOM.CONTENT_RULES.addEventListener(UI.MOUSE_DOWN, () => observer.observe(DOM.CONTENT_RULES, { attributes: true, attributeFilter: [UI.STYLE] }));
 
-  DOM.CONTENT_RULES.style.width = json.w;
-  DOM.CONTENT_RULES.style.height = json.h;
-}
-
-new MutationObserver(debounceEvent(() => {
-  DOM.CONTENT_RULES != undefined && window.localStorage.setItem("popupSize", JSON.stringify({ w: DOM.CONTENT_RULES.style.width, h: DOM.CONTENT_RULES.style.height }));
-}, 250)).observe(DOM.CONTENT_RULES, { attributes: true, attributeFilter: ['style'] });
+DOM.CONTENT_RULES.addEventListener(UI.MOUSE_UP, debounceEvent(() => observer.disconnect()));

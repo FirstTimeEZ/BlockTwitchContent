@@ -71,5 +71,8 @@ export const UI = {
   ACTIVE: "active",
   MESSAGE: "message",
   UNLOAD: "unload",
+  MOUSE_DOWN: "onmousedown",
+  MOUSE_UP: "onmouseup",
   DOM_LOADED: "DOMContentLoaded",
+  STYLE: "style",
 }
