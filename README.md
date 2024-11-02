@@ -128,8 +128,6 @@ This information can be useful for creating rules or finding bugs.
 
 [![](https://i.imgur.com/ddLFyJm.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/)
 
-[![](https://i.imgur.com/bPuow86.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/)
-
 # Self Healing
 
 The `Mixin` makes use of the `Matches` from the `Regex` to self-heal when [`Twitch`](https://www.twitch.tv) updates.
