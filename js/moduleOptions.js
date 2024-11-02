@@ -1,4 +1,5 @@
 import { CONFIG, C, UI } from "./exports/constants.js";
+import { setupCollapsibles } from "./exports/collapse.js";
 
 const DOM = {
   DEBUG_OPTION: document.getElementById(CONFIG.SETTINGS.DEBUG),
@@ -23,10 +24,4 @@ document.addEventListener(UI.DOM_LOADED, () => {
   DOM.ENCRYPTED_MEDIA_OPTION.checked = encryptedMediaDisabled !== null ? encryptedMediaDisabled === C.TRUE : true;
 });
 
-for (var i = 0; i < DOM.COLLAPSIBLES.length; i++) {
-  DOM.COLLAPSIBLES[i].addEventListener(UI.CLICK, function () {
-    this.classList.toggle(UI.ACTIVE);
-    const content = this.nextElementSibling;
-    content.style.maxHeight ? (content.style.maxHeight = null) : content.style.maxHeight = content.scrollHeight + C.PX;
-  });
-}
+setupCollapsibles(DOM.COLLAPSIBLES);

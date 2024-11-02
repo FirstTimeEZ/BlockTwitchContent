@@ -8,17 +8,17 @@ A [`Firefox Extension`](https://addons.mozilla.org/en-US/firefox/addon/block-twi
 
 You can easily create rules by opening the pop-up in the address bar while viewing [`Twitch`](https://www.twitch.tv). 
 
-[![](https://i.imgur.com/fmsPzih.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/)
+[![](https://i.imgur.com/sqP9TrH.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/)
 
 The list is stored locally and remains private.
 
-# Hide Common Spam
+# Settings Bar
 
-You can hide common spam by clicking the toggle buttons in the pop-up window
+You can mouse-over a setting to see what it does, detailed explanations below.
 
-![](https://i.imgur.com/SdKimXl.png)
+![](https://i.imgur.com/8nNqi94.png)
 
-### Bots
+### Hide Bot Spam
 
 ![](https://i.imgur.com/ohl4bFJ.png) Content containing the words below will be removed from chat if the `Hide Bots` setting is active
 
@@ -37,7 +37,7 @@ Botisimo
 TwitchBot
 ```
 
-### Commands
+### Hide Command Spam
 
 ![](https://i.imgur.com/UXkrU4E.png) Content containing the words below will be removed from chat if the `Hide Commands` setting is active
 
@@ -58,6 +58,19 @@ TwitchBot
 !vote
 ```
 
+### View Removed Message History
+
+![](https://i.imgur.com/63glI6e.png) Click the settings cog to open the removed message history in a new tab
+
+![](https://i.imgur.com/AHfOIH1.png)
+
+### Download List
+
+You can download the list of content rules any time by clicking the download button in the pop-up window
+
+![](https://i.imgur.com/iPD8aDE.png)
+
+---------
 
 # How does it work
 
@@ -100,12 +113,6 @@ export function createFragmentListener(matches) {
 Using a `Promise` this way creates a synchronous channel with the `Extension` through the `Content Script`.
 
 This makes it possible to update the `Hidden Chat Content Rules` in real time instead of needing a page refresh.
-
-# Download List
-
-You can download the list of content rules any time by clicking the download button in the pop-up window
-
-![](https://i.imgur.com/iPD8aDE.png)
 
 # Settings
 

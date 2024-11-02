@@ -9,7 +9,7 @@ const DOM = {
   HIDE_BOTS: document.getElementById(CONFIG.SETTINGS.HIDE_BOTS),
   HIDE_COMMANDS: document.getElementById(CONFIG.SETTINGS.HIDE_COMMANDS),
   DOWNLOAD_BUTTON: document.getElementById("downloadButton"),
-  /*SETTINGS_BUTTON: document.getElementById("settingsButton"),*/
+  SETTINGS_BUTTON: document.getElementById("settingsButton"),
 }
 
 const popupSize = window.localStorage.getItem("popupSize");
@@ -81,4 +81,5 @@ DOM.HIDE_COMMANDS.addEventListener(UI.CLICK, (e) => {
     browser.runtime.sendMessage({ requestForStateUpdate: true });
   }
 });
-//DOM.SETTINGS_BUTTON.addEventListener(UI.CLICK, (e) => {  console.log("Clicked", e);});
+
+DOM.SETTINGS_BUTTON.addEventListener(UI.CLICK, (e) => browser.runtime.sendMessage({ requestForSettingsTab: true }));

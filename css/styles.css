@@ -36,9 +36,27 @@ p {
     padding: 0%;
 }
 
+.messages p {
+    margin-top: var(--padding-small);
+    padding: var(--padding-small);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    border-radius: var(--border-radius);
+    background-color: var(--background);
+    font: var(--font);
+}
+
+.messages-content {
+    margin-top: 8px;
+    margin-bottom: 10px;
+    padding: var(--padding);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
+}
+
 pre {
     user-select: text;
-    width: 100%;
     white-space: pre-wrap;
     color: var(--text);
     padding: var(--padding);

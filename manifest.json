@@ -2,7 +2,7 @@
   "description": "Enables you to remove chatter from the chat using various different identifiers, phrases or simply a display name",
   "manifest_version": 2,
   "name": "Block Twitch Content",
-  "version": "106.2",
+  "version": "110.1",
   "icons": {
     "256": "icons/icon-e.png"
   },
@@ -49,12 +49,13 @@
   ],
   "browser_specific_settings": {
     "gecko": {
-      "strict_min_version": "120.0",
+      "strict_min_version": "126.0",
       "id": "BlockContent@Twitch.tv"
     }
   },
   "options_ui": {
     "page": "options.html",
     "browser_style": true
-  }
+  },
+  "options_page": "view.html"
 }
