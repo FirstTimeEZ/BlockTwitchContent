@@ -16,11 +16,11 @@ The list is stored locally and remains private.
 
 You can mouse-over a setting to see what it does, detailed explanations below.
 
-![](https://i.imgur.com/8nNqi94.png)
+[![](https://i.imgur.com/8nNqi94.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/)
 
 ### Hide Bot Spam
 
-![](https://i.imgur.com/ohl4bFJ.png) Content containing the words below will be removed from chat if the `Hide Bots` setting is active
+[![](https://i.imgur.com/ohl4bFJ.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/) Content containing the words below will be removed from chat if the `Hide Bots` setting is active
 
 ```
 StreamElements
@@ -39,7 +39,7 @@ TwitchBot
 
 ### Hide Command Spam
 
-![](https://i.imgur.com/UXkrU4E.png) Content containing the words below will be removed from chat if the `Hide Commands` setting is active
+[![](https://i.imgur.com/UXkrU4E.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/) Content containing the words below will be removed from chat if the `Hide Commands` setting is active
 
 ```
 !join
@@ -60,13 +60,13 @@ TwitchBot
 
 ### View Removed Message History
 
-![](https://i.imgur.com/63glI6e.png) Click the settings cog to open the removed message history in a new tab
+[![](https://i.imgur.com/63glI6e.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/) Click the settings cog to open the removed message history in a new tab
 
-![](https://i.imgur.com/AHfOIH1.png)
+[![](https://i.imgur.com/AHfOIH1.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/)
 
 ### Download List
 
-![](https://i.imgur.com/qae1VAi.png) You can download the list of content rules any time by clicking the download button in the pop-up window
+[![](https://i.imgur.com/qae1VAi.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/) You can download the list of content rules any time by clicking the download button in the pop-up window
 
 ---------
 
