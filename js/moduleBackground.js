@@ -5,6 +5,11 @@ import { broadcastToTwitchTabs, broadcastToTwitchTabsCallback, reloadTab } from 
 import { definedContentRules } from "./exports/content-rules.js";
 import { insertFragmentListener, removeFragmentListener } from "./exports/fragments.js";
 
+const requestHandlers = {
+  requestForState: () => getStorageItemStates(),
+  requestForStateUpdate: () => { getStorageItemStates(); broadcastToTwitchTabs({ refreshState: true }); }
+};
+
 function checkVendor(details) {
   const data = [];
   const filter = browser.webRequest.filterResponseData(details.requestId);
@@ -69,20 +74,16 @@ function checkGQL(details) {
 }
 
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (!isValidSender(sender)) {
-    logDebug("backgroundModule::invalidMessage", message, sender);
-    return;
-  }
+  if (isValidSender(sender)) {
+    const handlerFound = Object.keys(requestHandlers).find(key => message[key] !== undefined);
 
-  const handlers = {
-    requestForState: () => getStorageItemStates(),
-    requestForStateUpdate: () => { getStorageItemStates(); broadcastToTwitchTabs({ refreshState: true }); }
-  };
+    if (handlerFound) {
+      const requestHandled = requestHandlers[handlerFound]();
 
-  const handler = Object.keys(handlers).find(key => message[key] !== undefined);
-  if (handler) {
-    const response = handlers[handler]();
-    if (response) sendResponse(response);
+      requestHandled ? sendResponse(requestHandled) : logDebug("backgroundModule::requestUnhandled", handlerFound);
+    }
+  } else {
+    logDebug("backgroundModule::invalidMessage", sender);
   }
 });
 
