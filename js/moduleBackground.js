@@ -1,4 +1,5 @@
-import { CONFIG, STATE } from "./exports/exports.js";
+import { CONFIG, C } from "./exports/constants.js";
+import { STATE } from "./exports/exports.js";
 import { getStorageItemStates } from "./exports/storage.js";
 import { decodeData, isValidSender, logDebug } from "./exports/exports.js";
 import { broadcastToTwitchTabs, broadcastToTwitchTabsCallback, reloadTab } from "./exports/tabs.js";
@@ -13,7 +14,7 @@ const requestHandlers = {
 function checkVendor(details) {
   const data = [];
   const filter = browser.webRequest.filterResponseData(details.requestId);
-  const decoder = new TextDecoder(CONFIG.ENCODING);
+  const decoder = new TextDecoder(C.UTF_8);
   const encoder = new TextEncoder();
 
   filter.ondata = event => data.push(event.data);
@@ -41,7 +42,7 @@ function checkVendor(details) {
 function checkGQL(details) {
   const data = [];
   const filter = browser.webRequest.filterResponseData(details.requestId);
-  const decoder = new TextDecoder(CONFIG.ENCODING);
+  const decoder = new TextDecoder(C.UTF_8);
   const encoder = new TextEncoder();
 
   filter.ondata = event => data.push(event.data);
@@ -97,7 +98,7 @@ browser.webRequest.onBeforeRequest.addListener((details) => {
     return {};
   }
 
-  if (details.url.endsWith(CONFIG.JS_EXT) && CONFIG.REGEX.VENDOR.test(details.url)) {
+  if (details.url.endsWith(C.JS_EXT) && CONFIG.REGEX.VENDOR.test(details.url)) {
     return checkVendor(details);
   }
 

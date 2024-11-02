@@ -1,27 +1,28 @@
-import { CONFIG, STATE } from "./exports.js";
+import { CONFIG, C } from "./constants.js";
+import { STATE } from "./exports.js";
 
 export function getStorageItemStates() {
   loadDebugSetting();
   loadEncryptedMediaSetting();
   loadFragments();
-  
+
   return { state: STATE }
 }
 
 export function loadDebugSetting() {
   const debugSetting = window.localStorage.getItem(CONFIG.SETTINGS.DEBUG);
 
-  STATE.debug = debugSetting === "true";
+  STATE.debug = debugSetting === C.TRUE;
 }
 
 export function loadEncryptedMediaSetting() {
   const encryptedMedia = window.localStorage.getItem(CONFIG.SETTINGS.ENCRYPTED_MEDIA);
 
   if (encryptedMedia !== null) {
-    STATE.supervisorEM = encryptedMedia === "true";
+    STATE.supervisorEM = encryptedMedia === C.TRUE;
   }
   else {
-    window.localStorage.setItem(CONFIG.SETTINGS.ENCRYPTED_MEDIA, "true");
+    window.localStorage.setItem(CONFIG.SETTINGS.ENCRYPTED_MEDIA, C.TRUE);
     STATE.supervisorEM = true;
   }
 }
@@ -31,7 +32,7 @@ export function loadFragments() {
 
   if (fragments !== null) {
     STATE.fragments_storage = fragments;
-    STATE.fragments = fragments.split("\n");
+    STATE.fragments = fragments.split(C.NEW_LINE);
   }
   else {
     STATE.fragments_storage = [];

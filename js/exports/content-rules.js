@@ -1,19 +1,22 @@
+import { C } from "./constants.js";
+
 export function definedContentRules(text, item) {
-  const splitText = text.split("=");
-  if (splitText.length > 1 && splitText[1] != "") {
-    if (text.includes("user-type=")) {
+
+  const splitText = text.split(C.EQUALS);
+  if (splitText.length > 1 && splitText[1] != C.EMPTY) {
+    if (text.includes(C.CR.USER_TYPE)) {
       if (splitText[1].trim().includes(item.sender.__typename)) {
         return true;
       }
     }
 
-    if (text.includes("user-id=")) {
+    if (text.includes(C.CR.USER_ID)) {
       if (splitText[1].trim().includes(item.sender.id)) {
         return true;
       }
     }
 
-    if (text.includes("display-name=")) {
+    if (text.includes(C.CR.USER_DISPLAY_NAME)) {
       if (splitText[1].trim().includes(item.sender.displayName)) {
         return true;
       }

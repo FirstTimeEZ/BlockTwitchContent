@@ -1,4 +1,5 @@
-import { CONFIG, STATE, requestState, logDebug } from "./exports/exports.js";
+import { CONFIG } from "./exports/constants.js";
+import { STATE, requestState, logDebug } from "./exports/exports.js";
 import { debounceEvent } from "./exports/debounce.js";
 
 const DOM = {
@@ -37,4 +38,4 @@ DOM.CONTENT_RULES.addEventListener("input", debounceEvent((e) => {
     e.target.value !== "" ? window.localStorage.setItem(CONFIG.SETTINGS.FRAGMENTS, e.target.value) : window.localStorage.removeItem(CONFIG.SETTINGS.FRAGMENTS);
     browser.runtime.sendMessage({ requestForStateUpdate: true }); // PopupModule -> BackgroundModule
   }
-}, 750));
+}, CONFIG.DEBOUNCE_MS));

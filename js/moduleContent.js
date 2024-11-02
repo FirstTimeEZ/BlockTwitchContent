@@ -1,22 +1,23 @@
 (async () => {
-  const { CONFIG, STATE, requestState, logDebug } = await import(browser.runtime.getURL('') + 'js/exports/exports.js');
+  const { STATE, requestState, logDebug } = await import(browser.runtime.getURL('') + 'js/exports/exports.js');
+  const { CONFIG, C } = await import(browser.runtime.getURL('') + 'js/exports/constants.js');
 
   browser.runtime.onMessage.addListener((message, sender, sendResponse) => { // Listen for messages from the BackgroundModule
     if (sender.id == CONFIG.SENDER_UUID && sender.envType == CONFIG.SCRIPTS.OPTIONS) {
       if (message.refreshState) {
-        requestState("contentModule");
+        requestState(C.CM.CONTENT);
       }
       else if (message.refreshPageRequest) {
-        logDebug("contentModule::refreshPageRequest");
+        logDebug(C.CM.REFRESH);
 
         location.reload();
       }
       else {
-        logDebug("contentModule::unknownMessage", message, sender);
+        logDebug(C.CM.UNKNOWN, message, sender);
       }
     }
     else {
-      logDebug("contentModule::invalidMessage", sender);
+      logDebug(C.CM.INVALID, sender);
     }
   });
 
@@ -24,20 +25,20 @@
     if (STATE.enabled && event.data.completed === undefined
       && event.data.text != undefined
       && event.data.type != undefined
-      && event.data.type === "fp"
+      && event.data.type === C.FRAG_P
       && event.data.random != undefined
-      && typeof event.data.random === 'number'
-      && typeof event.data.type === 'string'
-      && typeof event.data.text === 'string'
+      && typeof event.data.random === C.NUMBER
+      && typeof event.data.type === C.STRING
+      && typeof event.data.text === C.STRING
       && Number.isFinite(event.data.random)) {
 
-      logDebug("contentModule::mixinMessage", event.data.text, event.data.random);
+      logDebug(C.CM.MIXIN, event.data.text, event.data.random);
 
-      const isFragmentMatched = STATE.fragments.some(frag => frag !== "" && event.data.text.includes(frag));
-      window.postMessage({ response: isFragmentMatched ? "f" : "w", completed: true, random: event.data.random }, "https://www.twitch.tv"); // Content Script -> Web Page Mixin
+      const isFragmentMatched = STATE.fragments.some(frag => frag !== C.EMPTY && event.data.text.includes(frag));
+      window.postMessage({ response: isFragmentMatched ? C.FRAG_F : C.FRAG_W, completed: true, random: event.data.random }, C.TWITCH); // Content Script -> Web Page Mixin
     }
   });
 
-  requestState("contentModule");
-  console.log("contentModule::Loaded");
+  requestState(C.CM.CONTENT);
+  console.log(C.CM.LOADED);
 })();

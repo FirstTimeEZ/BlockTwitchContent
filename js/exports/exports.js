@@ -1,21 +1,4 @@
-export const CONFIG = {
-  SENDER_UUID: "BlockContent@Twitch.tv",
-  SCRIPTS: {
-    CONTENT: "content_child",
-    OPTIONS: "addon_child"
-  },
-  SETTINGS: {
-    FRAGMENTS: "fragments",
-    DEBUG: "debugEnabled",
-    ENCRYPTED_MEDIA: "encryptedMedia"
-  },
-  REGEX: {
-    FRAGMENT: /([A-Za-z])\.messageProcessor\.processMessage\(([A-Za-z])\.data\)/,
-    VENDOR: /assets\/vendor-[0-9a-z]+?\.js/i
-  },
-  ENCODING: "utf-8",
-  JS_EXT: ".js",
-};
+import { CONFIG } from "./constants.js";
 
 export const STATE = {
   fragments: [],

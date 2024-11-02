@@ -1,4 +1,5 @@
-import { CONFIG, logDebug } from "./exports.js";
+import { CONFIG } from "./constants.js";
+import { logDebug } from "./exports.js";
 
 export function insertFragmentListener(matches, decodedString) {
   const insert = createFragmentListener(matches);
