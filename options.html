@@ -11,10 +11,11 @@
 <body>
     <button class="collapsible">Example Content Rules</button>
     <div class="content">
-        <p>Below are some example settings to get you started that hide some bots and spam</p>
-        <p>This will remove all chat content that mentions the words below, including replys</p>
+        <div class="collapsible-content">
+            <p>Below are some example settings to get you started that hide some bots and spam</p>
+            <p>This will remove all chat content that mentions the words below, including replys</p>
 
-        <pre>display-name=StreamElements
+            <pre>display-name=StreamElements
 display-name=Streamlabs
 display-name=SoundAlerts
 display-name=Moobot
@@ -27,15 +28,16 @@ display-name=Fossabot
 !watchtime
 !links</pre>
 
-        <p>You can create rules out of any content in a removed message</p>
-        <p>Removed messages can be found in the console as warnings</p>
-        <p>The more specific you make a rule the less likely it will match on something by accident</p>
+            <p>You can create rules out of any content in a removed message</p>
+            <p>Removed messages can be found in the console as warnings</p>
+            <p>The more specific you make a rule the less likely it will match on something by accident</p>
 
-        <pre>display-name=ExampleUser // Block comments from just this user.
+            <pre>display-name=ExampleUser // Block comments from just this user.
 user-id=712351331 // Block based on User Id
 user-type=mod // Block based on User Type
 :this is an example of a message in the chat // Block based on Comment
 ExampleUser // Blocks the word ExampleUser, including replys, users, comments, etc.</pre>
+        </div>
     </div>
 
     <div id="container">
