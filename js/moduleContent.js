@@ -16,9 +16,8 @@
         location.reload();
       }
       else if (message.pastMessages) {
-
-        if (CAPTURED.length > 50) {
-          CAPTURED.splice(0, CAPTURED.length - 50);
+        if (CAPTURED.length > 55) {
+          CAPTURED.splice(0, CAPTURED.length - 35);
         }
 
         browser.runtime.sendMessage({ pastMessagesReply: CAPTURED });

@@ -1,12 +1,10 @@
-import { STATE, requestState } from "./exports/state.js";
+import { requestState } from "./exports/state.js";
 
 const DOM = {
-  MESSAGES: document.getElementsByClassName("messages")
+  MESSAGES: document.getElementsByClassName("messages"),
 }
 
-requestState("viewModule", () => {
-  console.log(DOM.MESSAGES[0], STATE);
-});
+requestState("viewModule");
 
 browser.runtime.sendMessage({ requestPastMessages: true });
 

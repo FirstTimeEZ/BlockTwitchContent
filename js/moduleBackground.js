@@ -9,7 +9,7 @@ import { broadcastToTwitchTabs, broadcastToTwitchTabsCallback, reloadTab } from 
 const requestHandlers = {
   requestForState: () => getStorageItemStates(),
   requestForStateUpdate: () => { getStorageItemStates(); broadcastToTwitchTabs({ refreshState: true }); },
-  requestPastMessages: ()=>{ broadcastToTwitchTabs({ pastMessages: true })  },
+  requestPastMessages: () => { broadcastToTwitchTabs({ pastMessages: true }) },
   requestForSettingsTab: () => {
     browser.tabs.create({
       url: browser.runtime.getURL("") + "view.html"
@@ -96,7 +96,6 @@ function checkGQL(details) {
 }
 
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  console.log(message,sender);
   if (isValidSender(sender)) {
     const handlerFound = Object.keys(requestHandlers).find(key => message[key] !== undefined);
 
