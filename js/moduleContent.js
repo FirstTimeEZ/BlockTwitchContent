@@ -1,19 +1,22 @@
 (async () => {
   const { CONFIG, STATE, requestState, logDebug } = await import(browser.runtime.getURL('') + 'js/exports/exports.js');
 
-  browser.runtime.onMessage.addListener((request, sender, sendResponse) => { // Listen for messages from the BackgroundModule
+  browser.runtime.onMessage.addListener((message, sender, sendResponse) => { // Listen for messages from the BackgroundModule
     if (sender.id == CONFIG.SENDER_UUID && sender.envType == CONFIG.SCRIPTS.OPTIONS) {
-      if (request.refreshState) {
+      if (message.refreshState) {
         requestState("contentModule");
       }
-      else if (request.refreshPageRequest) {
+      else if (message.refreshPageRequest) {
         logDebug("contentModule::refreshPageRequest");
 
         location.reload();
       }
       else {
-        logDebug("contentModule::unknownRequest", request);
+        logDebug("contentModule::unknownMessage", message, sender);
       }
+    }
+    else {
+      logDebug("contentModule::invalidMessage", sender);
     }
   });
 
