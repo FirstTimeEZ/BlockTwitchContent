@@ -1,7 +1,8 @@
 :root {
     --background: #101013;
     --surface: #151618;
-    --text: #f3f4f6;
+    --surface-light: #1f2937;
+    --text-primary: #f3f4f6;
     --text-secondary: #9ca3af;
     --border: #4b5563;
     --border-focused: #63b3ed;
@@ -19,7 +20,7 @@ body {
     width: auto;
     height: auto;
     margin: 0;
-    color: var(--text);
+    color: var(--text-primary);
     padding: var(--padding);
     background: var(--background);
     line-height: var(--line-height);
@@ -58,7 +59,7 @@ p {
 pre {
     user-select: text;
     white-space: pre-wrap;
-    color: var(--text);
+    color: var(--text-primary);
     padding: var(--padding);
     background-color: var(--background);
     border-radius: var(--border-radius);
@@ -73,9 +74,15 @@ pre {
     border-radius: var(--border-radius);
 }
 
+.containerRem {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
 .label-size {
     margin-bottom: 4px;
-    color: var(--text);
+    color: var(--text-primary);
     font-size: var(--font-size);
     font-weight: var(--font-weight-heading);
 }
@@ -84,7 +91,7 @@ pre {
     text-align: center;
     margin-bottom: 4px;
     margin-top: -10px;
-    color: var(--text);
+    color: var(--text-primary);
     font-size: var(--font-size);
     font-weight: var(--font-weight-heading);
 }
@@ -137,7 +144,7 @@ input[type="checkbox"] {
     align-items: center;
     justify-content: space-between;
     transition: background-color 0.2s;
-    color: var(--text);
+    color: var(--text-primary);
     padding: var(--padding);
     background: var(--surface);
     font-size: var(--font-size);
@@ -148,7 +155,7 @@ input[type="checkbox"] {
 .collapsible:after {
     content: '\002B\0020 Open';
     float: right;
-    color: var(--text);
+    color: var(--text-primary);
     font-weight: var(--font-weight-heading);
 }
 
@@ -172,7 +179,7 @@ textarea {
     min-height: 100px;
     max-width: 540px;
     max-height: 510px;
-    color: var(--text);
+    color: var(--text-primary);
     background: var(--surface);
     line-height: var(--line-height);
     border: 1px solid var(--border);
@@ -235,7 +242,7 @@ textarea:hover {
 .button svg {
     width: 24px;
     height: 24px;
-    stroke: var(--text);
+    stroke: var(--text-primary);
 }
 
 /* button style */
@@ -255,13 +262,13 @@ textarea:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: var(--button-size);
-    height: var(--button-size);
     cursor: pointer;
     margin-top: 2px;
     transition: all 0.15s ease;
     background: var(--surface);
     box-shadow: var(--shadow);
+    width: var(--button-size);
+    height: var(--button-size);
     padding: var(--padding-small);
     border: 1px solid var(--border);
     border-radius: var(--border-radius);
@@ -274,19 +281,83 @@ textarea:hover {
 
 .toggle-button input[type="checkbox"]:checked+label {
     transform: scale(0.96);
-    background-color: var(--background);
-    border-color: var(--border-focused);
     box-shadow: none;
     top: 1px;
+    background-color: var(--background);
+    border-color: var(--border-focused);
 }
 
 .toggle-button label svg {
     width: 24px;
     height: 24px;
-    stroke: var(--text);
+    stroke: var(--text-primary);
 }
 
 /* toggle button */
+
+/* message card */
+
+.title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+}
+
+.messages {
+    gap: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.message-card {
+    border-radius: 0.5rem;
+    padding: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border);
+    background: var(--surface-light);
+}
+
+.message-content {
+    font-family: monospace;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+    background: var(--background);
+}
+
+.details-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.detail-item img {
+    width: 1rem;
+    height: 1rem;
+    object-fit: contain;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    background: var(--surface-light);
+}
+
+/* message card */
 
 /* font */
 
@@ -301,6 +372,9 @@ div,
 .label-size,
 .center-heading,
 .collapsible,
+.title,
+.message-card,
+.message-content,
 #container {
     font-family: var(--font);
 }

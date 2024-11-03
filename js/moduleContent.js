@@ -42,20 +42,24 @@
       && typeof event.data.text === C.STRING
       && Number.isFinite(event.data.random)) {
 
-      logDebug(CM.MIXIN, event.data.text, event.data.random);
+      let matched = false;
 
-      let matched = STATE.fragments.some(frag => frag !== C.EMPTY && event.data.text.includes(frag));
-
-      if (!matched) {
-        matched = (STATE.hideCommands && commonCommands.some(frag => frag !== C.EMPTY && event.data.text.includes(frag)));
+      if (event.data.text[0] === "@" && event.data.text.includes("PRIVMSG")) {
+        matched = STATE.fragments.some(frag => frag !== C.EMPTY && event.data.text.includes(frag));
 
         if (!matched) {
-          matched = (STATE.hideBots && commonBots.some(frag => frag !== C.EMPTY && event.data.text.includes(frag)));
-        }
-      }
+          matched = (STATE.hideCommands && commonCommands.some(frag => frag !== C.EMPTY && event.data.text.includes(frag)));
 
-      if (matched) {
-        CAPTURED.push(event.data.text);
+          if (!matched) {
+            matched = (STATE.hideBots && commonBots.some(frag => frag !== C.EMPTY && event.data.text.includes(frag)));
+          }
+        }
+
+        if (matched) {
+          CAPTURED.push(event.data.text);
+        }
+
+        logDebug(CM.MIXIN, event.data.text, event.data.random, matched);
       }
 
       window.postMessage({ response: matched ? CM.FRAG_F : CM.FRAG_W, completed: true, random: event.data.random }, URI.TWITCH); // Content Script -> Web Page Mixin
