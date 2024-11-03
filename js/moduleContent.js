@@ -2,6 +2,7 @@
   const { STATE, requestState } = await import(browser.runtime.getURL('') + 'js/exports/state.js');
   const { CONFIG, C, CM, URI, UI, commonBots, commonCommands } = await import(browser.runtime.getURL('') + 'js/exports/constants.js');
   const { logDebug } = await import(browser.runtime.getURL('') + 'js/exports/util.js');
+  const { searchFromEnd } = await import(browser.runtime.getURL('') + 'js/exports/search.js');
 
   const CAPTURED = [];
 
@@ -44,7 +45,7 @@
 
       let matched = false;
 
-      if (event.data.text[0] === "@" && event.data.text.includes("PRIVMSG")) {
+      if (event.data.text[0] === "@" && searchFromEnd(event.data.text, "PRIVMSG")) {
         matched = STATE.fragments.some(frag => frag !== C.EMPTY && event.data.text.includes(frag));
 
         if (!matched) {

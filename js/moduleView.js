@@ -66,25 +66,20 @@ function parseMessageDetails(message) {
   };
 }
 
-function showEmptyState() {
-  DOM.messages.innerHTML = `
-      <div class="empty-state">
-          <p>No messages have been blocked yet. Please refresh soon.</p>
-      </div>
-  `;
-}
-
 function renderMessages(messages) {
   DOM.messages.innerHTML = '';
 
   if (!messages || messages.length === 0) {
-    showEmptyState();
+    DOM.messages.innerHTML = `
+    <div class="empty-state">
+        <p>No messages have been blocked yet. Please refresh soon.</p>
+    </div>
+    `;
     return;
   }
 
   for (let i = messages.length - 1; i >= 0; i--) {
-    const message = messages[i];
-    const parsedMessage = parseMessageDetails(message);
+    const parsedMessage = parseMessageDetails(messages[i]);
     const messageCard = createMessageCard(parsedMessage);
     DOM.messages.appendChild(messageCard);
   }
