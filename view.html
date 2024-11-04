@@ -11,11 +11,20 @@
 
 <body>
     <div class="container containerRem">
-        <h1 class="title">Removed Message History</h1>
+        <div class="container-flex">
+            <h1 class="title">Removed Message History</h1>
+            <img src="/icons/waiting.gif" class="waitingSmall" id="waitingSmall">
+        </div>
         <div id="messages" class="messages"></div>
     </div>
-
     <script src="js/moduleView.js" type="module"></script>
 </body>
+
+<style>
+    .title {
+        width: calc(100% - 60px);
+        height: 20px;
+    }
+</style>
 
 </html>

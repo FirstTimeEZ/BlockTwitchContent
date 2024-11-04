@@ -1,8 +1,9 @@
-let c = undefined;
 let hasLoaded = false;
+let readLen = 0;
 
 const DOM = {
-  messages: document.getElementById('messages')
+  MESSAGES: document.getElementById('messages'),
+  WAITING: document.getElementById('waitingSmall')
 };
 
 const DETAILS_REGEX = /((display-name=|user-id=|badges=|badge-info=)[^\n;:.]+)/gm;
@@ -71,14 +72,21 @@ function parseMessageDetails(message) {
 
 function renderMessages(messages) {
   if (!hasLoaded && messages && messages.length > 0) {
-    c && clearInterval(c);
     hasLoaded = true;
-    DOM.messages.innerHTML = ``;
+    DOM.MESSAGES.innerHTML = ``;
+    DOM.WAITING.style.display = "flex";
+  }
 
-    for (let i = messages.length - 1; i >= 0; i--) {
-      const parsedMessage = parseMessageDetails(messages[i]);
-      const messageCard = createMessageCard(parsedMessage);
-      DOM.messages.appendChild(messageCard);
+  if (messages && messages.length > 0) {
+    if (messages.length > readLen) {
+      for (let i = messages.length - 1; i >= readLen; i--) {
+        const parsedMessage = parseMessageDetails(messages[i]);
+        const messageCard = createMessageCard(parsedMessage);
+        DOM.MESSAGES.insertBefore(messageCard, DOM.MESSAGES.firstChild);
+
+      }
+
+      readLen = messages.length;
     }
   }
 }
@@ -90,21 +98,18 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-  DOM.messages.innerHTML = `
+  DOM.WAITING.style.display = "none";
+  DOM.MESSAGES.innerHTML = `
     <div class="empty-state">
-        <img src="/icons/waiting.gif" width="60px" height="60px">
-        <p>Waiting for messages.
-        No messages have been blocked yet.</p>
+        <img src="/icons/waiting.gif" class="waitingSmall">
+        <p>No messages have been blocked yet
+        You can come back later or wait
+        New messages will be added automatically</p>
     </div>
     `;
 
   browser.runtime.sendMessage({ requestPastMessages: true });
-
-  c = setInterval(() => {
-    if (!hasLoaded) {
-      browser.runtime.sendMessage({ requestPastMessages: true });
-    } else {
-      clearInterval(c);
-    }
-  }, 1000);
+  setInterval(() => {
+    browser.runtime.sendMessage({ requestPastMessages: true });
+  }, 1250);
 });
