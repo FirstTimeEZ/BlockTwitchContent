@@ -1,9 +1,13 @@
 export function searchFromEnd(str, word) {
-  for (let i = str.length; i > 0; i--) {
-    if (str.substring(i - word.length, i) === word) {
-      return true;
+  const wordLenMinusOne = word.length - 1;
+
+  for (let index = str.length - 1; index > 0; index--) {
+    if (str[index] === word[wordLenMinusOne]) {
+      if (str.substring(index - wordLenMinusOne, index + 1) === word) {
+        return index;
+      }
     }
   }
 
-  return false;
+  return null;
 }
