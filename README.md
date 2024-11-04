@@ -113,7 +113,7 @@ This makes it possible to update the `Hidden Chat Content Rules` in real time in
 
 Additional settings and examples can be found in the `options` menu.
 
-[![](https://i.imgur.com/D0bxVAX.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/)
+[![](https://i.imgur.com/v0KhWu3.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/)
 
 # Debug Mode
 
