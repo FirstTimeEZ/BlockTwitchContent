@@ -1,3 +1,6 @@
+let c = undefined;
+let hasLoaded = false;
+
 const DOM = {
   messages: document.getElementById('messages')
 };
@@ -67,21 +70,16 @@ function parseMessageDetails(message) {
 }
 
 function renderMessages(messages) {
-  DOM.messages.innerHTML = '';
+  if (!hasLoaded && messages && messages.length > 0) {
+    c && clearInterval(c);
+    hasLoaded = true;
+    DOM.messages.innerHTML = ``;
 
-  if (!messages || messages.length === 0) {
-    DOM.messages.innerHTML = `
-    <div class="empty-state">
-        <p>No messages have been blocked yet. Please refresh soon.</p>
-    </div>
-    `;
-    return;
-  }
-
-  for (let i = messages.length - 1; i >= 0; i--) {
-    const parsedMessage = parseMessageDetails(messages[i]);
-    const messageCard = createMessageCard(parsedMessage);
-    DOM.messages.appendChild(messageCard);
+    for (let i = messages.length - 1; i >= 0; i--) {
+      const parsedMessage = parseMessageDetails(messages[i]);
+      const messageCard = createMessageCard(parsedMessage);
+      DOM.messages.appendChild(messageCard);
+    }
   }
 }
 
@@ -92,5 +90,21 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+  DOM.messages.innerHTML = `
+    <div class="empty-state">
+        <img src="/icons/waiting.gif" width="60px" height="60px">
+        <p>Waiting for messages.
+        No messages have been blocked yet.</p>
+    </div>
+    `;
+
   browser.runtime.sendMessage({ requestPastMessages: true });
+
+  c = setInterval(() => {
+    if (!hasLoaded) {
+      browser.runtime.sendMessage({ requestPastMessages: true });
+    } else {
+      clearInterval(c);
+    }
+  }, 1000);
 });
