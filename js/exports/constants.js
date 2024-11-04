@@ -22,7 +22,7 @@ export const CONFIG = {
 };
 
 export const C = {
-  AT: '@',
+  AT: "@",
   EQUALS: "=",
   EMPTY: "",
   TRUE: "true",
