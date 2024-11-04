@@ -1,8 +1,10 @@
-import { CONFIG, C, UI } from "./exports/constants.js";
+import { CONFIG, UI } from "./exports/constants.js";
 import { setupCollapsibles } from "./exports/collapse.js";
+import { STATE, requestState } from "./exports/state.js";
 
 const DOM = {
   DEBUG_OPTION: document.getElementById(CONFIG.SETTINGS.DEBUG),
+  EXTRAS_OPTION: document.getElementById(CONFIG.SETTINGS.EXTRAS),
   ENCRYPTED_MEDIA_OPTION: document.getElementById(CONFIG.SETTINGS.ENCRYPTED_MEDIA),
   COLLAPSIBLES: document.getElementsByClassName("collapsible"),
 }
@@ -10,18 +12,22 @@ const DOM = {
 DOM.DEBUG_OPTION.addEventListener(UI.CLICK, (e) => {
   window.localStorage.setItem(CONFIG.SETTINGS.DEBUG, e.target.checked);
   browser.runtime.sendMessage({ requestForStateUpdate: true }); // OptionsModule -> BackgroundModule
+});
+
+DOM.EXTRAS_OPTION.addEventListener(UI.CLICK, (e) => {
+  window.localStorage.setItem(CONFIG.SETTINGS.EXTRAS, e.target.checked);
 })
 
 DOM.ENCRYPTED_MEDIA_OPTION.addEventListener(UI.CLICK, (e) => {
   window.localStorage.setItem(CONFIG.SETTINGS.ENCRYPTED_MEDIA, e.target.checked);
-})
+});
 
 document.addEventListener(UI.DOM_LOADED, () => {
-  const debugEnabled = window.localStorage.getItem(CONFIG.SETTINGS.DEBUG);
-  const encryptedMediaDisabled = window.localStorage.getItem(CONFIG.SETTINGS.ENCRYPTED_MEDIA);
-
-  DOM.DEBUG_OPTION.checked = debugEnabled !== null ? debugEnabled == C.TRUE : false;
-  DOM.ENCRYPTED_MEDIA_OPTION.checked = encryptedMediaDisabled !== null ? encryptedMediaDisabled === C.TRUE : true;
+  requestState("optionsModule", () => {
+    DOM.DEBUG_OPTION.checked = STATE.debugSetting;
+    DOM.EXTRAS_OPTION.checked = STATE.disableChatExtras;
+    DOM.ENCRYPTED_MEDIA_OPTION.checked = STATE.disableEncryptedMedia;
+  });
 });
 
 setupCollapsibles(DOM.COLLAPSIBLES);

@@ -10,44 +10,16 @@ export const CONFIG = {
     ENCRYPTED_MEDIA: "encryptedMedia",
     HIDE_BOTS: "hideBots",
     HIDE_COMMANDS: "hideCommands",
+    EXTRAS: "chatExtras"
   },
   REGEX: {
     FRAGMENT: /([A-Za-z])\.messageProcessor\.processMessage\(([A-Za-z])\.data\)/,
-    VENDOR: /assets\/vendor-[0-9a-z]+?\.js/i
+    VENDOR: /assets\/vendor-[0-9a-z]+?\.js/i,
+    CHAT_SHELL: /assets\/pages.channel.components.channel-shell.components.chat-shell.components.chat-live-[0-9a-z]+?\.js/i,
+    CHAT_ACTION_SUFFIX: /([A-Za-z0-9_]+?)\.([A-Za-z0-9_]+?)\.ModerationAction:return/,
   },
   DEBOUNCE_MS: 750,
 };
-
-export const commonBots = [
-  "display-name=StreamElements",
-  "display-name=Streamlabs",
-  "display-name=SoundAlerts",
-  "display-name=Moobot",
-  "display-name=Nightbot",
-  "display-name=Fossabot",
-  "display-name=DeepBot",
-  "display-name=WizeBot",
-  "display-name=PhantomBot",
-  "display-name=Botisimo",
-  "display-name=TwitchBot"
-];
-
-export const commonCommands = [
-  "!join",
-  "!gamble",
-  "!following",
-  "!followage",
-  "!links",
-  "!points",
-  "!hype",
-  "!uptime",
-  "!commands",
-  "!watchtime",
-  "!socials",
-  "!donate",
-  "!schedule",
-  "!vote"
-];
 
 export const C = {
   EQUALS: "=",
@@ -109,3 +81,110 @@ export const UI = {
   DOM_LOADED: "DOMContentLoaded",
   STYLE: "style",
 }
+
+export const COMMON_BOTS = [
+  "display-name=StreamElements",
+  "display-name=Streamlabs",
+  "display-name=SoundAlerts",
+  "display-name=Moobot",
+  "display-name=Nightbot",
+  "display-name=Fossabot",
+  "display-name=DeepBot",
+  "display-name=WizeBot",
+  "display-name=PhantomBot",
+  "display-name=Botisimo",
+  "display-name=TwitchBot"
+];
+
+export const COMMON_COMMANDS = [
+  "!join",
+  "!gamble",
+  "!following",
+  "!followage",
+  "!links",
+  "!points",
+  "!hype",
+  "!uptime",
+  "!commands",
+  "!watchtime",
+  "!socials",
+  "!height",
+  "!weight",
+  "!donate",
+  "!schedule",
+  "!vote",
+  "!specs",
+  "!sens",
+  "!party",
+  "!song",
+  "!playing",
+  "!game",
+  "!music",
+  "!patch",
+  "!event"
+];
+
+export const COMMON_COMMANDS_S = [
+  ":!join",
+  ":!gamble",
+  ":!following",
+  ":!followage",
+  ":!links",
+  ":!points",
+  ":!hype",
+  ":!uptime",
+  ":!commands",
+  ":!watchtime",
+  ":!socials",
+  ":!height",
+  ":!weight",
+  ":!donate",
+  ":!schedule",
+  ":!vote",
+  ":!specs",
+  ":!sens",
+  ":!party",
+  ":!song",
+  ":!playing",
+  ":!game",
+  ":!music",
+  ":!patch",
+  ":!event"
+];
+
+export const BLOCKED_CHATTER_TYPES = [
+  "AutoMod",
+  "Moderation",
+  "ModerationAction",
+  "TargetedModerationAction",
+  "Notice",
+  "Info",
+  "InlinePrivateCallout",
+  "Raid",
+  "Unraid",
+  "ExtensionMessage",
+  "ChannelPointsReward",
+  "CommunityChallengeContribution",
+  "Shoutout",
+  "ViewerMilestone",
+  "AnnouncementMessage",
+  "Resubscription",
+  "ExtendSubscription",
+  "PrimePaidUpgrade",
+  "PrimeCommunityGiftReceivedEvent",
+  "RestrictedLowTrustUserMessage",
+  "AnonGiftPaidUpgrade",
+  "AnonSubMysteryGift",
+  "AnonSubGift",
+  "GiftPaidUpgrade",
+  "BitsCharity",
+  "RewardGift",
+  "StandardPayForward",
+  "CommunityPayForward",
+  "SubMysteryGift",
+  "SubGift",
+  "CharityDonation",
+  "Subscription",
+  "BitsBadgeTierMessage",
+  "FirstCheerMessage"
+];

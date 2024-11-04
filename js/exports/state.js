@@ -3,24 +3,26 @@ import { logDebug } from "./util.js";
 export const STATE = {
   fragments: [],
   enabled: true,
-  debug: false,
-  supervisorEM: false,
+  debugSetting: false,
+  disableEncryptedMedia: false,
   fragments_storage: "",
   hideBots: false,
-  hideCommands: false
+  hideCommands: false,
+  disableChatExtras: true,
 };
 
 export function requestState(who, func) {
   browser.runtime.sendMessage({ requestForState: true },
     (response) => {
       if (response != undefined) {
-        STATE.debug = response.state.debug;
+        STATE.debugSetting = response.state.debugSetting;
         STATE.enabled = response.state.enabled;
         STATE.fragments = response.state.fragments;
         STATE.fragments_storage = response.state.fragments_storage;
-        STATE.supervisorEM = response.state.supervisorEM;
+        STATE.disableEncryptedMedia = response.state.disableEncryptedMedia;
         STATE.hideBots = response.state.hideBots;
         STATE.hideCommands = response.state.hideCommands;
+        STATE.disableChatExtras = response.state.disableChatExtras;
 
         logDebug(who + "::refreshState", STATE);
 

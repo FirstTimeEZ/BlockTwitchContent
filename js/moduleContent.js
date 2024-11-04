@@ -1,6 +1,6 @@
 (async () => {
   const { STATE, requestState } = await import(browser.runtime.getURL('') + 'js/exports/state.js');
-  const { CONFIG, C, CM, URI, UI, commonBots, commonCommands } = await import(browser.runtime.getURL('') + 'js/exports/constants.js');
+  const { CONFIG, C, CM, URI, UI, COMMON_BOTS, COMMON_COMMANDS_S } = await import(browser.runtime.getURL('') + 'js/exports/constants.js');
   const { logDebug } = await import(browser.runtime.getURL('') + 'js/exports/util.js');
   const { searchFromEnd } = await import(browser.runtime.getURL('') + 'js/exports/search.js');
 
@@ -49,10 +49,10 @@
         matched = STATE.fragments.some(frag => frag !== C.EMPTY && event.data.text.includes(frag));
 
         if (!matched) {
-          matched = (STATE.hideCommands && commonCommands.some(frag => frag !== C.EMPTY && event.data.text.includes(frag)));
+          matched = (STATE.hideCommands && COMMON_COMMANDS_S.some(frag => frag !== C.EMPTY && event.data.text.includes(frag)));
 
           if (!matched) {
-            matched = (STATE.hideBots && commonBots.some(frag => frag !== C.EMPTY && event.data.text.includes(frag)));
+            matched = (STATE.hideBots && COMMON_BOTS.some(frag => frag !== C.EMPTY && event.data.text.includes(frag)));
           }
         }
 

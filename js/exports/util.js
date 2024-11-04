@@ -5,6 +5,6 @@ export const decodeData = (data, decoder) => data.length === 1 ? decoder.decode(
 
 export const isValidSender = sender => sender.id === CONFIG.SENDER_UUID && (sender.envType === CONFIG.SCRIPTS.CONTENT || sender.envType === CONFIG.SCRIPTS.OPTIONS);
 
-export const logDebug = (...args) => STATE.debug && console.log(...args);
+export const logDebug = (...args) => STATE.debugSetting && console.log(...args);
 
 export const logError = (...args) => console.error(...args);

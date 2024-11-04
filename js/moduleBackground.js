@@ -1,4 +1,4 @@
-import { CONFIG, C, URI, ICON, commonBots, commonCommands } from "./exports/constants.js";
+import { CONFIG, C, URI, ICON, COMMON_BOTS, COMMON_COMMANDS, BLOCKED_CHATTER_TYPES } from "./exports/constants.js";
 import { STATE } from "./exports/state.js";
 import { getStorageItemStates } from "./exports/storage.js";
 import { definedContentRules } from "./exports/content-rules.js";
@@ -16,6 +16,39 @@ const requestHandlers = {
     });
   }
 };
+
+function checkChatShell(details) {
+  const data = [];
+  const filter = browser.webRequest.filterResponseData(details.requestId);
+  const decoder = new TextDecoder(C.UTF_8);
+  const encoder = new TextEncoder();
+
+  filter.ondata = event => data.push(event.data);
+
+  filter.onstop = () => {
+    let decodedString = decodeData(data, decoder);
+
+    const suffix = CONFIG.REGEX.CHAT_ACTION_SUFFIX.exec(decodedString);
+
+    if (suffix.length > 1) {
+      for (let index = 0; index < BLOCKED_CHATTER_TYPES.length; index++) {
+        const m = `${suffix[1]}.${suffix[2]}.${BLOCKED_CHATTER_TYPES[index]}:return`;
+        const n = `${suffix[1]}.${suffix[2]}.${BLOCKED_CHATTER_TYPES[index]}:{};return null;return`;
+
+        if (STATE.enabled && STATE.disableChatExtras) {
+          decodedString = decodedString.replace(m, n);
+        }
+        else {
+          decodedString = decodedString.replace(n, m);
+        }
+      }
+    }
+
+    filter.write(encoder.encode(decodedString));
+    filter.close();
+    data.length = 0;
+  };
+}
 
 function checkVendor(details) {
   const data = [];
@@ -35,8 +68,8 @@ function checkVendor(details) {
     }
 
     if (STATE.enabled) {
-      logDebug("backgroundModule::encryptedMediaAllowed", STATE.supervisorEM === false);
-      STATE.supervisorEM === true && (decodedString = decodedString.replace('n.setAttribute("allow","encrypted-media *"),', C.EMPTY));
+      logDebug("backgroundModule::encryptedMediaAllowed", STATE.disableEncryptedMedia === false);
+      STATE.disableEncryptedMedia === true && (decodedString = decodedString.replace('n.setAttribute("allow","encrypted-media *"),', C.EMPTY));
     }
 
     filter.write(encoder.encode(decodedString));
@@ -69,13 +102,13 @@ function checkGQL(details) {
             }
 
             if (STATE.hideBots) {
-              if (commonBots.some(fragment => fragment.length > 1 && (chatMessage.sender.displayName.includes(fragment) || chatMessage.content.text.includes(fragment) || definedContentRules(fragment, chatMessage)))) {
+              if (COMMON_BOTS.some(fragment => fragment.length > 1 && (chatMessage.sender.displayName.includes(fragment) || chatMessage.content.text.includes(fragment) || definedContentRules(fragment, chatMessage)))) {
                 return false;
               }
             }
 
             if (STATE.hideCommands) {
-              if (commonCommands.some(fragment => fragment.length > 1 && (chatMessage.sender.displayName.includes(fragment) || chatMessage.content.text.includes(fragment) || definedContentRules(fragment, chatMessage)))) {
+              if (COMMON_COMMANDS.some(fragment => fragment.length > 1 && (chatMessage.sender.displayName.includes(fragment) || chatMessage.content.text.includes(fragment) || definedContentRules(fragment, chatMessage)))) {
                 return false;
               }
             }
@@ -123,8 +156,16 @@ browser.webRequest.onBeforeRequest.addListener((details) => {
     return {};
   }
 
-  if (details.url.endsWith(C.JS_EXT) && CONFIG.REGEX.VENDOR.test(details.url)) {
-    return checkVendor(details);
+  if (details.url.endsWith(C.JS_EXT)) {
+    if (CONFIG.REGEX.VENDOR.test(details.url)) {
+      return checkVendor(details);
+    }
+
+    if (CONFIG.REGEX.CHAT_SHELL.test(details.url)) {
+      return checkChatShell(details);
+    }
+
+    return {};
   }
 
   if (details.url.startsWith(URI.TWITCH_GQL)) {

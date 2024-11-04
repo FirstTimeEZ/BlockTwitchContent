@@ -7,6 +7,7 @@ export function getStorageItemStates() {
   loadFragments();
   loadHideBotsSetting();
   loadHideCommandsSetting();
+  loadChatExtrasSetting();
 
   return { state: STATE }
 }
@@ -14,28 +15,56 @@ export function getStorageItemStates() {
 export function loadDebugSetting() {
   const debugSetting = window.localStorage.getItem(CONFIG.SETTINGS.DEBUG);
 
-  STATE.debug = debugSetting === C.TRUE;
+  if (debugSetting !== null) {
+    STATE.debugSetting = debugSetting === C.TRUE;
+  } else {
+    window.localStorage.setItem(CONFIG.SETTINGS.DEBUG, false);
+    STATE.debugSetting = false;
+  }
 }
 
 export function loadHideBotsSetting() {
   const hideBots = window.localStorage.getItem(CONFIG.SETTINGS.HIDE_BOTS);
-  STATE.hideBots = hideBots === C.TRUE;
+
+  if (hideBots !== null) {
+    STATE.hideBots = hideBots === C.TRUE;
+  } else {
+    window.localStorage.setItem(CONFIG.SETTINGS.HIDE_BOTS, false);
+    STATE.hideBots = false;
+  }
 }
 
 export function loadHideCommandsSetting() {
   const hideCommands = window.localStorage.getItem(CONFIG.SETTINGS.HIDE_COMMANDS);
-  STATE.hideCommands = hideCommands === C.TRUE;
+
+  if (hideCommands !== null) {
+    STATE.hideCommands = hideCommands === C.TRUE;
+  } else {
+    window.localStorage.setItem(CONFIG.SETTINGS.HIDE_COMMANDS, false);
+    STATE.hideCommands = false;
+  }
 }
 
 export function loadEncryptedMediaSetting() {
-  const encryptedMedia = window.localStorage.getItem(CONFIG.SETTINGS.ENCRYPTED_MEDIA);
+  const disableEncryptedMedia = window.localStorage.getItem(CONFIG.SETTINGS.ENCRYPTED_MEDIA);
 
-  if (encryptedMedia !== null) {
-    STATE.supervisorEM = encryptedMedia === C.TRUE;
+  if (disableEncryptedMedia !== null) {
+    STATE.disableEncryptedMedia = disableEncryptedMedia === C.TRUE;
   }
   else {
     window.localStorage.setItem(CONFIG.SETTINGS.ENCRYPTED_MEDIA, C.TRUE);
-    STATE.supervisorEM = true;
+    STATE.disableEncryptedMedia = true;
+  }
+}
+
+export function loadChatExtrasSetting() {
+  const disableChatExtras = window.localStorage.getItem(CONFIG.SETTINGS.EXTRAS);
+
+  if (disableChatExtras !== null) {
+    STATE.disableChatExtras = disableChatExtras === C.TRUE;
+  } else {
+    window.localStorage.setItem(CONFIG.SETTINGS.EXTRAS, true);
+    STATE.disableChatExtras = true;
   }
 }
 

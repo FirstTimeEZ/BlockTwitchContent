@@ -14,6 +14,11 @@
     --font-weight-heading: bold;
     --font-size: large;
     --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
+    --link: rgb(94, 197, 163);
+}
+
+a {
+    color: var(--link);
 }
 
 body {
