@@ -1,9 +1,8 @@
 (async () => {
-  const url = browser.runtime.getURL('');
-  const { STATE, requestState } = await import(url + 'js/exports/state.js');
-  const { CONFIG, C, CM, URI, UI, COMMON_BOTS, COMMON_COMMANDS_S } = await import(url + 'js/exports/constants.js');
-  const { logDebug } = await import(url + 'js/exports/util.js');
-  const { searchFromEnd } = await import(url + 'js/exports/search.js');
+  const { STATE, requestState } = await import(browser.runtime.getURL('') + 'js/exports/state.js');
+  const { CONFIG, C, CM, URI, UI, COMMON_BOTS, COMMON_COMMANDS_S } = await import(browser.runtime.getURL('') + 'js/exports/constants.js');
+  const { logDebug } = await import(browser.runtime.getURL('') + 'js/exports/util.js');
+  const { searchFromEnd } = await import(browser.runtime.getURL('') + 'js/exports/search.js');
 
   const CAPTURED = [];
 
