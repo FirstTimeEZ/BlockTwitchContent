@@ -21,7 +21,7 @@
  * debouncedFunction();
  * debouncedFunction();
  */
-function debounceEvent(func, delay) {
+export function debounceEvent(func, delay) {
   let timeoutId;
   return function (...args) {
       timeoutId && clearTimeout(timeoutId);

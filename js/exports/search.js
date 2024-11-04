@@ -8,14 +8,23 @@
  *                       or null if the word is not found.
  */
 export function searchFromEnd(str, word) {
-  const wordLenMinusOne = word.length - 1;
-  let s = 0;
-  for (let index = str.length - 1; index > 0; index--) {
-    if (str[index] === word[wordLenMinusOne]) {
-      for (let innerIndex = 0; innerIndex < word.length; innerIndex++) {
-        (word[wordLenMinusOne - innerIndex] == str[index - innerIndex]) ? (s++) : (s = 0);
-        if (s == word.length) {
-          return index;
+  let c = 0;
+  const wl = word.length - 1;
+
+  for (let i = str.length - 1; i > 0; i--) {
+    if (str[i] === word[wl]) {
+      for (let ii = 0; ii < word.length; ii++) {
+        if (word[wl - ii] == str[i - ii]) {
+          c++;
+
+          if (c == word.length) {
+            return i;
+          }
+        }
+        else {
+          c = 0;
+
+          break;
         }
       }
     }
