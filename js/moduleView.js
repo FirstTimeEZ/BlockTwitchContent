@@ -71,19 +71,25 @@ function parseMessageDetails(message) {
 }
 
 function renderMessages(messages) {
-  if (!hasLoaded && messages && messages.length > 0) {
-    hasLoaded = true;
-    DOM.MESSAGES.innerHTML = ``;
-    DOM.WAITING.style.display = "flex";
-  }
-
   if (messages && messages.length > 0) {
     if (messages.length > readLen) {
-      for (let i = messages.length - 1; i >= readLen; i--) {
-        const parsedMessage = parseMessageDetails(messages[i]);
-        const messageCard = createMessageCard(parsedMessage);
-        DOM.MESSAGES.insertBefore(messageCard, DOM.MESSAGES.firstChild);
+      if (hasLoaded) {
+        for (let i = messages.length - 1; i >= readLen; i--) {
+          const parsedMessage = parseMessageDetails(messages[i]);
+          const messageCard = createMessageCard(parsedMessage);
+          DOM.MESSAGES.insertBefore(messageCard, DOM.MESSAGES.firstChild);
+        }
+      }
+      else {
+        hasLoaded = true;
+        DOM.MESSAGES.innerHTML = ``;
+        DOM.WAITING.style.display = "flex";
 
+        for (let i = messages.length - 1; i >= readLen; i--) {
+          const parsedMessage = parseMessageDetails(messages[i]);
+          const messageCard = createMessageCard(parsedMessage);
+          DOM.MESSAGES.appendChild(messageCard);
+        }
       }
 
       readLen = messages.length;
