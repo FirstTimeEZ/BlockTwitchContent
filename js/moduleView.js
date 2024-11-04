@@ -49,7 +49,8 @@ function getIconForDetail(type) {
   }[type] || 'icons/badge-info.png';
 
   img.src = iconPath;
-  img.alt = `${type} icon`;
+  img.classList.add("card-icon-detail");
+
   return img;
 }
 
