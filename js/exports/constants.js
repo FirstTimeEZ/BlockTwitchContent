@@ -22,6 +22,7 @@ export const CONFIG = {
 };
 
 export const C = {
+  AT: '@',
   EQUALS: "=",
   EMPTY: "",
   TRUE: "true",
@@ -35,6 +36,7 @@ export const C = {
 }
 
 export const CM = {
+  COMMENT: "PRIVMSG",
   FRAG_P: "fp",
   FRAG_F: "f",
   FRAG_W: "w",

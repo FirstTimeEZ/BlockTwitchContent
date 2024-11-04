@@ -1,5 +1,5 @@
-import { CONFIG, C, URI, ICON, COMMON_BOTS, COMMON_COMMANDS, BLOCKED_CHATTER_TYPES } from "./exports/constants.js";
 import { STATE } from "./exports/state.js";
+import { CONFIG, C, URI, ICON, COMMON_BOTS, COMMON_COMMANDS, BLOCKED_CHATTER_TYPES } from "./exports/constants.js";
 import { getStorageItemStates } from "./exports/storage.js";
 import { definedContentRules } from "./exports/content-rules.js";
 import { decodeData, isValidSender, logDebug } from "./exports/util.js";
