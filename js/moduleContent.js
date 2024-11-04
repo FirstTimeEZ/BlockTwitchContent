@@ -17,11 +17,14 @@
         location.reload();
       }
       else if (message.pastMessages) {
-        if (CAPTURED.length > 55) {
-          CAPTURED.splice(0, CAPTURED.length - 35);
+        if (CAPTURED.length > 250) {
+          CAPTURED.splice(0, CAPTURED.length - 50);
         }
 
         browser.runtime.sendMessage({ pastMessagesReply: CAPTURED });
+      }
+      else if (message.captureCount) {
+        browser.runtime.sendMessage({ captureCountReply: CAPTURED.length });
       }
       else {
         logDebug(CM.UNKNOWN, message, sender);

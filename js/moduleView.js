@@ -95,12 +95,19 @@ function renderMessages(messages) {
 
       readLen = messages.length;
     }
+    else {
+      browser.runtime.sendMessage({ requestCaptureCount: true });
+    }
   }
 }
 
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.pastMessagesReply !== undefined) {
+  if (message.pastMessagesReply) {
     renderMessages(message.pastMessagesReply);
+  }
+
+  if (message.captureCountReply) {
+    readLen = message.captureCountReply;
   }
 });
 
@@ -118,5 +125,5 @@ document.addEventListener('DOMContentLoaded', () => {
   browser.runtime.sendMessage({ requestPastMessages: true });
   setInterval(() => {
     browser.runtime.sendMessage({ requestPastMessages: true });
-  }, 1250);
+  }, 1100);
 });
