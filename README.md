@@ -55,6 +55,15 @@ TwitchBot
 !donate
 !schedule
 !vote
+!specs
+!sens
+!party
+!song
+!playing
+!game
+!music
+!patch
+!event
 ```
 
 ### View Removed Message History
