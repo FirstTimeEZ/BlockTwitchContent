@@ -6,9 +6,6 @@ export const broadcastToTwitchTabs = (message) => {
       tabs.forEach(tab => {
         if (isTwitchTab(tab)) {
           message.tab = tab;
-
-          logDebug("tabs::broadcastToTwitchTabs", message, message.tab);
-
           sendMessageToTab(tab, message);
         }
       });

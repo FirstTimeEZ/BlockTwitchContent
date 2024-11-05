@@ -11,7 +11,7 @@ import { C, UI } from "./_ext-constants.js";
 export function setupCollapsibles(element) {
     for (var i = 0; i < element.length; i++) {
         element[i].addEventListener(UI.CLICK, function () {
-            this.classList.toggle(UI.ACTIVE);
+            this.classList.toggle(UI.COLLAPSIBLE_ACTIVE);
             const content = this.nextElementSibling;
             content.style.maxHeight ? (content.style.maxHeight = null) : content.style.maxHeight = content.scrollHeight + C.PX;
         });

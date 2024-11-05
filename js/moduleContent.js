@@ -20,15 +20,16 @@
         location.reload();
       }
       else if (message.pastMessages) {
+        let stream = message.tab.title.replace(" - Twitch", "");
         if (message.first) {
           headValue = CAPTURED.length;
 
-          browser.runtime.sendMessage({ pastMessagesReply: true, new: true, remove: undefined, len: CAPTURED.length, values: CAPTURED, id: message.tab.id });
+          browser.runtime.sendMessage({ pastMessagesReply: true, new: true, remove: undefined, len: CAPTURED.length, values: CAPTURED, id: message.tab.id, streamer: stream });
         } else {
           if (CAPTURED.length > headValue) {
             headValue = CAPTURED.length;
 
-            browser.runtime.sendMessage({ pastMessagesReply: true, new: true, remove: undefined, len: CAPTURED.length, values: CAPTURED, id: message.tab.id });
+            browser.runtime.sendMessage({ pastMessagesReply: true, new: true, remove: undefined, len: CAPTURED.length, values: CAPTURED, id: message.tab.id, streamer: stream });
 
             if (CAPTURED.length > 225) {
               CAPTURED.splice(0, CAPTURED.length - 50);
@@ -39,7 +40,7 @@
           else if (headUpdate) {
             headUpdate = false;
 
-            browser.runtime.sendMessage({ pastMessagesReply: true, new: undefined, remove: true, len: headValue, values: undefined, id: message.tab.id });
+            browser.runtime.sendMessage({ pastMessagesReply: true, new: undefined, remove: true, len: headValue, values: undefined, id: message.tab.id, streamer: stream });
           }
         }
       }

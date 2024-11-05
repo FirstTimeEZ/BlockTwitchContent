@@ -68,9 +68,9 @@ TwitchBot
 
 ### View Removed Message History
 
-[![](https://i.imgur.com/63glI6e.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/) Click the settings cog to open the removed message history in a new tab
+[![](https://i.imgur.com/63glI6e.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/) Click the settings cog to open the removed message history in a new tab, If you have more than one stream open then each streamer gets its own tab.
 
-[![](https://i.imgur.com/q2Alb4O.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/)
+[![](https://i.imgur.com/jFcoMhu.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/)
 
 ### Download List
 

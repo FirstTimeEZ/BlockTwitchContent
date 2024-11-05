@@ -170,7 +170,7 @@ input[type="checkbox"] {
     font-weight: var(--font-weight-heading);
 }
 
-.active:after {
+.collapsible-active:after {
     content: "\2212\0020 Close";
 }
 
@@ -214,6 +214,7 @@ textarea:hover {
 /* button style */
 
 .button {
+    user-select: none;
     top: 0;
     width: var(--button-size);
     height: var(--button-size);
@@ -246,11 +247,13 @@ textarea:hover {
 }
 
 .button:hover {
+    user-select: none;
     border-color: var(--border-focused);
     background-color: var(--background);
 }
 
 .button svg {
+    user-select: none;
     width: 24px;
     height: 24px;
     stroke: var(--text-primary);
@@ -262,6 +265,7 @@ textarea:hover {
 
 .toggle-button {
     position: relative;
+    user-select: none;
     display: inline-block;
 }
 
@@ -271,6 +275,7 @@ textarea:hover {
 
 .toggle-button label {
     display: flex;
+    user-select: none;
     align-items: center;
     justify-content: center;
     cursor: pointer;
@@ -368,8 +373,7 @@ textarea:hover {
     background: var(--surface-light);
 }
 
-.card-icon-detail
-{
+.card-icon-detail {
     user-select: none;
 }
 
@@ -386,6 +390,38 @@ textarea:hover {
 }
 
 /* spinner */
+
+/* tabs */
+
+.tab-container {
+    width: 100%;
+    margin: 0 auto;
+}
+
+.tabs {
+    width: calc(100% - 60px);
+    display: flex;
+    justify-content: left;
+    gap: 8px;
+    margin: 8px 0;
+}
+
+.tab-content {
+    padding: 10px;
+    border-top: 1px solid var(--border);
+}
+
+.tab {
+    display: none;
+}
+
+.tab.active {
+    display: block;
+    background-color: var(--background);
+    border-color: var(--border-focused);
+}
+
+/* tabs */
 
 /* font */
 

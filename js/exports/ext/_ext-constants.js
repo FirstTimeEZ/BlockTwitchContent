@@ -5,4 +5,5 @@ export const C = {
 export const UI = {
   CLICK: "click",
   ACTIVE: "active",
+  COLLAPSIBLE_ACTIVE: "collapsible-active",
 }
