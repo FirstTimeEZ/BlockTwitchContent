@@ -6,8 +6,8 @@
 
   const CAPTURED = [];
 
-  let lastSent = 0;
-  let = removedOldSinceLast = false;
+  let headValue = 0;
+  let headUpdate = false;
 
   browser.runtime.onMessage.addListener((message, sender, sendResponse) => { // Listen for messages from the BackgroundModule
     if (sender.id == CONFIG.SENDER_UUID && sender.envType == CONFIG.SCRIPTS.OPTIONS) {
@@ -21,25 +21,25 @@
       }
       else if (message.pastMessages) {
         if (message.first) {
-          lastSent = CAPTURED.length;
+          headValue = CAPTURED.length;
 
           browser.runtime.sendMessage({ pastMessagesReply: true, new: true, remove: undefined, len: CAPTURED.length, values: CAPTURED });
         } else {
-          if (CAPTURED.length > lastSent) {
-            lastSent = CAPTURED.length;
+          if (CAPTURED.length > headValue) {
+            headValue = CAPTURED.length;
 
             browser.runtime.sendMessage({ pastMessagesReply: true, new: true, remove: undefined, len: CAPTURED.length, values: CAPTURED });
 
             if (CAPTURED.length > 225) {
               CAPTURED.splice(0, CAPTURED.length - 50);
-              removedOldSinceLast = true;
+              headValue = CAPTURED.length;
+              headUpdate = true;
             }
           }
-          else if (removedOldSinceLast) {
-            lastSent = CAPTURED.length;
-            removedOldSinceLast = false;
+          else if (headUpdate) {
+            headUpdate = false;
 
-            browser.runtime.sendMessage({ pastMessagesReply: true, new: undefined, remove: true, len: CAPTURED.length, values: undefined });
+            browser.runtime.sendMessage({ pastMessagesReply: true, new: undefined, remove: true, len: headValue, values: undefined });
           }
         }
       }
