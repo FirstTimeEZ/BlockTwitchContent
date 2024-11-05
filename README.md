@@ -16,7 +16,7 @@ The list is stored locally and remains private.
 
 You can mouse-over a setting to see what it does, detailed explanations below.
 
-[![](https://i.imgur.com/8nNqi94.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/)
+[![](https://i.imgur.com/Ly4ONTR.gif)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/)
 
 ### Hide Bot Spam
 
@@ -70,7 +70,7 @@ TwitchBot
 
 [![](https://i.imgur.com/63glI6e.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/) Click the settings cog to open the removed message history in a new tab, If you have more than one stream open then each streamer gets its own tab.
 
-[![](https://i.imgur.com/jFcoMhu.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/)
+[![](https://i.imgur.com/Q8JltQM.gif)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/)
 
 ### Download List
 
