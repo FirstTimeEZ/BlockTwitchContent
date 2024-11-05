@@ -120,7 +120,11 @@ function renderMessages(message, tab, dom) {
 function showTab(tabId) {
   const tabs = document.querySelectorAll('.tab');
   tabs.forEach(tab => { tab.classList.remove('active'); });
-  document.getElementById(tabId).classList.add('active');
+  document.getElementById(`tab${tabId}`).classList.add('active');
+
+  const button = document.getElementById(`button${tabId}`);
+  button.classList.add('active');
+  button.checked = true;
 }
 
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -129,17 +133,23 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
       tabSettings[message.id] = { readHead: 0, message: message, firstMessage: true };
       const createTabButton = document.createElement('div');
 
-      let toggleButtonInsert = `
-    <div class="toggle-button">
-        <input type="checkbox" id="button${message.id}">
-        <label for="button${message.id}" title="${message.streamer}">
-            ${message.streamer}
-        </label>
-    </div>      
-  `;
+      const toggleButton = document.createElement('div');
+      toggleButton.className = 'toggle-button';
 
-      createTabButton.innerHTML = toggleButtonInsert;
-      createTabButton.addEventListener("click", (e) => {
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.id = `button${message.id}`;
+
+      const label = document.createElement('label');
+      label.htmlFor = `button${message.id}`;
+      label.title = message.streamer;
+      label.textContent = message.streamer;
+
+      toggleButton.appendChild(checkbox);
+      toggleButton.appendChild(label);
+      createTabButton.appendChild(toggleButton);
+
+      toggleButton.addEventListener("click", (e) => {
 
         if (!e.target.checked) {
           e.target.checked = true;
@@ -151,44 +161,65 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
               button.classList.remove("active");
             }
           });
-        }
 
-        showTab(`tab${message.id}`);
+          showTab(message.id);
+        }
       });
 
       DOM.TABS.appendChild(createTabButton);
 
       const createTab = document.createElement('div');
-      createTab.innerHTML = `
-    <div class="tab" id="tab${message.id}">
-        <div class="container containerRem">
-            <div class="container-flex">
-                <h1 class="title">Removed Message History for ${message.streamer}</h1>
-                <img src="/icons/waiting.gif" class="waitingSmall" id="waitingSmall${message.id}" />
-            </div>
-            <div id="messages${message.id}" class="messages">
-                <div class="empty-state">
-                    <img src="/icons/waiting.gif" class="waitingSmall">
-                    <p>No messages have been blocked yet
-                        You can come back later or wait
-                        New messages will be added automatically</p>
-                </div>
-            </div>
-        </div>
-    </div>
-      `;
+      createTab.className = 'tab';
+      createTab.id = `tab${message.id}`;
 
+      const container = document.createElement('div');
+      container.className = 'container containerRem';
+
+      const containerFlex = document.createElement('div');
+      containerFlex.className = 'container-flex';
+
+      const title = document.createElement('h1');
+      title.className = 'title';
+      title.textContent = `Removed Message History for ${message.streamer}`;
+
+      const spinner = document.createElement('img');
+      spinner.src = '/icons/waiting.gif';
+      spinner.className = 'waitingSmall';
+      spinner.id = `waitingSmall${message.id}`;
+
+      containerFlex.appendChild(title);
+      containerFlex.appendChild(spinner);
+      container.appendChild(containerFlex);
+
+      const messagesDiv = document.createElement('div');
+      messagesDiv.id = `messages${message.id}`;
+      messagesDiv.className = 'messages';
+
+      const emptyState = document.createElement('div');
+      emptyState.className = 'empty-state';
+
+      const emptySpinner = document.createElement('img');
+      emptySpinner.src = '/icons/waiting.gif';
+      emptySpinner.className = 'waitingSmall';
+
+      const emptyMessage = document.createElement('p');
+      emptyMessage.textContent = `No messages have been blocked yet. You can come back later or wait. New messages will be added automatically.`;
+
+      emptyState.appendChild(emptySpinner);
+      emptyState.appendChild(emptyMessage);
+      messagesDiv.appendChild(emptyState);
+      container.appendChild(messagesDiv);
+      createTab.appendChild(container);
       DOM.TABS_CONTENT.appendChild(createTab);
 
       tabSettings[message.id].dom = document.getElementById(`messages${message.id}`);
       tabSettings[message.id].spinner = document.getElementById(`waitingSmall${message.id}`);
 
       if (!tabActive) {
-        showTab(`tab${message.id}`);
+        showTab(message.id);
         tabActive = true;
       }
-    }
-    else {
+    } else {
       tabSettings[message.id].message = message;
       console.log(tabSettings[message.id].message);
     }
