@@ -1,3 +1,4 @@
+let firstUpdate = true;
 let hasLoaded = false;
 let readLen = 0;
 
@@ -71,43 +72,41 @@ function parseMessageDetails(message) {
   };
 }
 
-function renderMessages(messages) {
-  if (messages && messages.length > 0) {
-    if (messages.length > readLen) {
-      if (hasLoaded) {
-        for (let i = messages.length - 1; i >= readLen; i--) {
-          const parsedMessage = parseMessageDetails(messages[i]);
-          const messageCard = createMessageCard(parsedMessage);
-          DOM.MESSAGES.insertBefore(messageCard, DOM.MESSAGES.firstChild);
-        }
-      }
-      else {
-        hasLoaded = true;
-        DOM.MESSAGES.innerHTML = ``;
-        DOM.WAITING.style.display = "flex";
+function renderMessages(message) {
+  if (message.new && message.len > 0) {
 
-        for (let i = messages.length - 1; i >= readLen; i--) {
-          const parsedMessage = parseMessageDetails(messages[i]);
-          const messageCard = createMessageCard(parsedMessage);
-          DOM.MESSAGES.appendChild(messageCard);
-        }
+    if (hasLoaded) {
+      for (let i = message.len - 1; i >= readLen; i--) {
+        const parsedMessage = parseMessageDetails(message.values[i]);
+        const messageCard = createMessageCard(parsedMessage);
+        DOM.MESSAGES.insertBefore(messageCard, DOM.MESSAGES.firstChild);
       }
-
-      readLen = messages.length;
     }
     else {
-      browser.runtime.sendMessage({ requestCaptureCount: true });
+      hasLoaded = true;
+      DOM.MESSAGES.innerHTML = ``;
+      DOM.WAITING.style.display = "flex";
+
+      for (let i = message.len - 1; i >= readLen; i--) {
+        const parsedMessage = parseMessageDetails(message.values[i]);
+        const messageCard = createMessageCard(parsedMessage);
+        DOM.MESSAGES.appendChild(messageCard);
+      }
     }
+
+    readLen = message.len;
+    firstUpdate = false;
+  }
+  else if (message.remove) {
+    readLen = message.len;
+
+    browser.runtime.sendMessage({ requestPastMessages: true, flushed: true, first: false });
   }
 }
 
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.pastMessagesReply) {
-    renderMessages(message.pastMessagesReply);
-  }
-
-  if (message.captureCountReply) {
-    readLen = message.captureCountReply;
+    renderMessages(message);
   }
 });
 
@@ -122,8 +121,9 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
     `;
 
-  browser.runtime.sendMessage({ requestPastMessages: true });
+  browser.runtime.sendMessage({ requestPastMessages: true, flushed: false, first: firstUpdate });
+
   setInterval(() => {
-    browser.runtime.sendMessage({ requestPastMessages: true });
+    browser.runtime.sendMessage({ requestPastMessages: true, flushed: false, first: firstUpdate });
   }, 1100);
 });

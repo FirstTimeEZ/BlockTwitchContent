@@ -9,8 +9,7 @@ import { broadcastToTwitchTabs, broadcastToTwitchTabsCallback, reloadTab } from 
 const requestHandlers = {
   requestForState: () => getStorageItemStates(),
   requestForStateUpdate: () => { getStorageItemStates(); broadcastToTwitchTabs({ refreshState: true }); },
-  requestPastMessages: () => { broadcastToTwitchTabs({ pastMessages: true }) },
-  requestCaptureCount: () => { broadcastToTwitchTabs({ captureCount: true }) },
+  requestPastMessages: (e) => { broadcastToTwitchTabs({ pastMessages: true, flushed: e.flushed, first: e.first }) },
   requestForSettingsTab: () => {
     browser.tabs.create({
       url: browser.runtime.getURL("") + "view.html"
@@ -139,7 +138,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
       requestHandledWithResponse && sendResponse(requestHandledWithResponse);
     }
     else {
-      if (message.pastMessagesReply || message.captureCountReply) {
+      if (message.pastMessagesReply) {
         return;
       }
 
