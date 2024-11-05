@@ -1,8 +1,8 @@
 import { STATE, requestState } from "./exports/state.js";
 import { CONFIG, UI, C, PM } from "./exports/constants.js";
-import { debounceEvent } from "./exports/debounce.js";
 import { logDebug } from "./exports/util.js";
-import { createDownload } from "./exports/download.js";
+import { debounceEvent } from "./exports/ext/debounce.js";
+import { createDownload } from "./exports/ext/download.js";
 
 const DOM = {
   CONTENT_RULES: document.getElementById(CONFIG.SETTINGS.FRAGMENTS),

@@ -12,9 +12,12 @@
     <button class="collapsible">Example Content Rules</button>
     <div class="content">
         <div class="collapsible-content">
-            <p>You can read about how to create rules on the <a href="https://github.com/FirstTimeEZ/BlockTwitchContent/wiki">rule creation guide wiki page.</a></p>
-            <p>Below are some example settings to get you started that hide some bots and spam</p>
-            <p>This will remove all chat content that mentions the words below, including replys</p>
+            <p>
+                You can read about how to create rules on the <a
+                    href="https://github.com/FirstTimeEZ/BlockTwitchContent/wiki">rule creation guide wiki page.</a>
+                Below are some example settings to get you started that hide some bots and spam
+                This will remove all chat content that mentions the words below, including replys
+            </p>
 
             <pre>display-name=StreamElements
 display-name=Streamlabs
@@ -28,8 +31,10 @@ display-name=Fossabot
 !followage
 !watchtime
 !links</pre>
-            <p>Removed messages can be found on the removed message history page</p>
-            <p>The more specific you make a rule the less likely it will match on something by accident</p>
+            <p>
+                Removed messages can be found on the removed message history page
+                The more specific you make a rule the less likely it will match on something by accident
+            </p>
 
             <pre>display-name=ExampleUser // Block comments from just this user.
 user-id=712351331 // Block based on User Id
@@ -44,16 +49,19 @@ ExampleUser // Blocks the word ExampleUser, including replys, users, comments, e
             <input type="checkbox" id="debugEnabled">
             <label for="debugEnabled" class="label-size">Debug Enabled</label>
         </div>
-        <p>Enable extra output that could be useful if there are errors and you want to
-            <a href="https://github.com/FirstTimeEZ/BlockTwitchContent/issues">report a bug.</a>
-        </p>
-        <p>This can also be useful for creating more advanced rules than are possible with the removed message history
+
+        <p>
+            Enable extra output that could be useful if there are errors and you want to <a
+                href="https://github.com/FirstTimeEZ/BlockTwitchContent/issues">report a bug.</a>
+            This can also be useful for creating more advanced rules than are possible with the removed message history
         </p>
     </div>
 
     <div id="container">
         <div class="label-size">Note</div>
-        <p>A page refresh is required after you change the settings below</p>
+        <p>
+            A page refresh is required after you change the settings below
+        </p>
     </div>
 
     <div id="container">
@@ -61,8 +69,11 @@ ExampleUser // Blocks the word ExampleUser, including replys, users, comments, e
             <input type="checkbox" id="chatExtras">
             <label for="chatExtras" class="label-size">Disable Chat Extras</label>
         </div>
-        <p>When enabled only comments and replys will appear in chat</p>
-        <p>Disables extra messages that appear when a user subscribes, raids, highlights their comment etc.</p>
+
+        <p>
+            When enabled only comments and replys will appear in chat
+            Disables extra messages that appear when a user subscribes, raids, highlights their comment etc.
+        </p>
     </div>
 
     <div id="container">
@@ -70,7 +81,10 @@ ExampleUser // Blocks the word ExampleUser, including replys, users, comments, e
             <input type="checkbox" id="encryptedMedia">
             <label for="encryptedMedia" class="label-size">No Encrypted Media</label>
         </div>
-        <p>Do not allow the supervisor to use encrypted media</p>
+
+        <p>
+            Do not allow the supervisor to use encrypted media
+        </p>
     </div>
 
     <script src="js/moduleOptions.js" type="module"></script>

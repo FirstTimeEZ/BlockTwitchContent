@@ -2,7 +2,7 @@
   const { STATE, requestState } = await import(browser.runtime.getURL('') + 'js/exports/state.js');
   const { CONFIG, C, CM, URI, UI, COMMON_BOTS, COMMON_COMMANDS_S } = await import(browser.runtime.getURL('') + 'js/exports/constants.js');
   const { logDebug } = await import(browser.runtime.getURL('') + 'js/exports/util.js');
-  const { searchFromEnd } = await import(browser.runtime.getURL('') + 'js/exports/search.js');
+  const { searchFromEnd } = await import(browser.runtime.getURL('') + 'js/exports/ext/search.js');
 
   const CAPTURED = [];
 

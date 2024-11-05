@@ -1,6 +1,6 @@
 import { STATE, requestState } from "./exports/state.js";
 import { CONFIG, UI } from "./exports/constants.js";
-import { setupCollapsibles } from "./exports/collapse.js";
+import { setupCollapsibles } from "./exports/ext/collapse.js";
 
 const DOM = {
   DEBUG_OPTION: document.getElementById(CONFIG.SETTINGS.DEBUG),
