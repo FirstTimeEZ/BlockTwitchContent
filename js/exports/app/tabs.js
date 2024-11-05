@@ -5,7 +5,10 @@ export const broadcastToTwitchTabs = (message) => {
     browser.tabs.query({}).then((tabs) => {
       tabs.forEach(tab => {
         if (isTwitchTab(tab)) {
-          logDebug("tabs::broadcastToTwitchTabs", message);
+          message.tab = tab;
+
+          logDebug("tabs::broadcastToTwitchTabs", message, message.tab);
+
           sendMessageToTab(tab, message);
         }
       });

@@ -23,12 +23,12 @@
         if (message.first) {
           headValue = CAPTURED.length;
 
-          browser.runtime.sendMessage({ pastMessagesReply: true, new: true, remove: undefined, len: CAPTURED.length, values: CAPTURED });
+          browser.runtime.sendMessage({ pastMessagesReply: true, new: true, remove: undefined, len: CAPTURED.length, values: CAPTURED, id: message.tab.id });
         } else {
           if (CAPTURED.length > headValue) {
             headValue = CAPTURED.length;
 
-            browser.runtime.sendMessage({ pastMessagesReply: true, new: true, remove: undefined, len: CAPTURED.length, values: CAPTURED });
+            browser.runtime.sendMessage({ pastMessagesReply: true, new: true, remove: undefined, len: CAPTURED.length, values: CAPTURED, id: message.tab.id });
 
             if (CAPTURED.length > 225) {
               CAPTURED.splice(0, CAPTURED.length - 50);
@@ -39,12 +39,12 @@
           else if (headUpdate) {
             headUpdate = false;
 
-            browser.runtime.sendMessage({ pastMessagesReply: true, new: undefined, remove: true, len: headValue, values: undefined });
+            browser.runtime.sendMessage({ pastMessagesReply: true, new: undefined, remove: true, len: headValue, values: undefined, id: message.tab.id });
           }
         }
       }
       else {
-        logDebug(CM.UNKNOWN, message, sender);
+        logDebug(CM.UNKNOWN, message, message.tab, sender);
       }
     }
     else {
