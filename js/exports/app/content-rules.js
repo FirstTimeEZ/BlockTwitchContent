@@ -1,4 +1,4 @@
-import { C, CR } from "./constants.js";
+import { C, CR } from "./_app-constants.js";
 
 export function definedContentRules(text, item) {
 

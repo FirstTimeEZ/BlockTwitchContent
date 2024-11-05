@@ -1,5 +1,5 @@
-import { STATE, requestState } from "./exports/state.js";
-import { CONFIG, UI } from "./exports/constants.js";
+import { STATE, requestState } from "./exports/app/state.js";
+import { CONFIG, UI } from "./exports/app/_app-constants.js";
 import { setupCollapsibles } from "./exports/ext/collapse.js";
 
 const DOM = {

@@ -1,10 +1,10 @@
-import { STATE } from "./exports/state.js";
-import { CONFIG, C, URI, ICON, COMMON_BOTS, COMMON_COMMANDS, BLOCKED_CHATTER_TYPES } from "./exports/constants.js";
-import { getStorageItemStates } from "./exports/storage.js";
-import { definedContentRules } from "./exports/content-rules.js";
-import { decodeData, isValidSender, logDebug } from "./exports/util.js";
-import { insertFragmentListener, removeFragmentListener } from "./exports/fragments.js";
-import { broadcastToTwitchTabs, broadcastToTwitchTabsCallback, reloadTab } from "./exports/tabs.js";
+import { STATE } from "./exports/app/state.js";
+import { CONFIG, C, URI, ICON, COMMON_BOTS, COMMON_COMMANDS, BLOCKED_CHATTER_TYPES } from "./exports/app/_app-constants.js";
+import { getStorageItemStates } from "./exports/app/storage.js";
+import { definedContentRules } from "./exports/app/content-rules.js";
+import { decodeData, isValidSender, logDebug } from "./exports/app/util.js";
+import { insertFragmentListener, removeFragmentListener } from "./exports/app/fragments.js";
+import { broadcastToTwitchTabs, broadcastToTwitchTabsCallback, reloadTab } from "./exports/app/tabs.js";
 
 const requestHandlers = {
   requestForState: () => getStorageItemStates(),
