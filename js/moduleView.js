@@ -76,24 +76,18 @@ function parseMessageDetails(message) {
 
 function renderMessages(message, tab, dom) {
   if (message.new && message.len > tab.readHead) {
+    let update = undefined;
 
-    if (tabSettings[message.id].hasLoaded) {
-      for (let i = message.len - 1; i >= tab.readHead; i--) {
-        const parsedMessage = parseMessageDetails(message.values[i]);
-        const messageCard = createMessageCard(parsedMessage);
-        dom.insertBefore(messageCard, dom.firstChild);
-      }
+    for (let i = message.len - 1; i >= tab.readHead; i--) {
+      const parsedMessage = parseMessageDetails(message.values[i]);
+      const messageCard = createMessageCard(parsedMessage);
+
+      tabSettings[message.id].hasLoaded ? dom.insertBefore(messageCard, dom.firstChild) : dom.appendChild(messageCard), (update === undefined && (update = true));
     }
-    else {
-      tabSettings[message.id].spinner.style.display = "flex";
 
-      for (let i = message.len - 1; i >= tab.readHead; i--) {
-        const parsedMessage = parseMessageDetails(message.values[i]);
-        const messageCard = createMessageCard(parsedMessage);
-        dom.appendChild(messageCard);
-      }
-
+    if (update) {
       tabSettings[message.id].hasLoaded = true;
+      tabSettings[message.id].spinner.style.display = "flex";
     }
 
     tab.readHead = message.len;
