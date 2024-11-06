@@ -37,7 +37,7 @@
           headValue = CAPTURED.length;
           currentStreamer = stream;
 
-          browser.runtime.sendMessage({ pastMessagesReply: true, new: true, remove: undefined, len: CAPTURED.length, values: CAPTURED, id: message.tab.id, streamer: stream });
+          browser.runtime.sendMessage({ pastMessagesReply: true, new: true, remove: undefined, len: CAPTURED.length, values: CAPTURED, id: message.tab.id, streamer: stream, first: true });
 
           return;
         }

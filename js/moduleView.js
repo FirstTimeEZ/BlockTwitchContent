@@ -97,14 +97,22 @@ function renderMessages(message, tab, dom) {
     }
 
     tab.readHead = message.len;
-    tabSettings[message.id].emptyStateVisible && (tabSettings[message.id].emptyStateVisible = false);
+    tabSettings[message.id].firstRun = false;
   }
   else if (message.remove) {
     message.remove = undefined;
 
     tab.readHead = message.len;
 
-    browser.runtime.sendMessage({ requestPastMessages: true, flushed: true, first: false });
+    browser.tabs.query({}).then((tabs) => tabs.forEach(tab => {
+      isTwitchTab(tab) && tab.id == message.id && sendMessageToTab(tab, { pastMessages: true });
+    }));
+  }
+  else if (message.first) {
+    message.first = undefined;
+
+    tabSettings[message.id].hasLoaded = true;
+    tabSettings[message.id].firstRun = false;
   }
 }
 
@@ -151,10 +159,10 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
       tabSettings[message.id].readHead = 0;
       tabSettings[message.id].pastMessagesReply = true;
       tabSettings[message.id].hasLoaded = false;
+      tabSettings[message.id].firstRun = true;
 
       tabSettings[message.id].dom.innerHTML = ``;
       tabSettings[message.id].dom.appendChild(emptyStateDOM());
-      tabSettings[message.id].emptyStateVisible = true;
     }
   }
   else if (message.pastMessagesReply) {
@@ -230,8 +238,8 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
       container.appendChild(messagesDiv);
       createTab.appendChild(container);
       DOM.TABS_CONTENT.appendChild(createTab);
-      tabSettings[message.id].emptyStateVisible = true;
 
+      tabSettings[message.id].firstRun = true;
       tabSettings[message.id].dom = document.getElementById(`messages${message.id}`);
       tabSettings[message.id].spinner = document.getElementById(`waitingSmall${message.id}`);
 
@@ -247,13 +255,9 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 document.addEventListener('DOMContentLoaded', () => {
   setInterval(() => {
-    browser.tabs.query({}).then((tabs) => {
-      tabs.forEach(tab => {
-        if (isTwitchTab(tab)) {
-          sendMessageToTab(tab, { pastMessages: true, flushed: false, first: tabSettings[tab.id] != undefined ? tabSettings[tab.id].emptyStateVisible : true });
-        }
-      });
-    });
+    browser.tabs.query({}).then((tabs) => tabs.forEach(tab => {
+      isTwitchTab(tab) && sendMessageToTab(tab, { pastMessages: true, first: tabSettings[tab.id] != undefined ? tabSettings[tab.id].firstRun : true });
+    }));
   }, 1000);
 });
 
