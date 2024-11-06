@@ -1,8 +1,7 @@
 import { isTwitchTab, sendMessageToTab } from "./exports/app/tabs.js";
 
 let initialTabSet = false;
-
-let tabSettings = [];
+let indexedTabStates = [];
 
 const DOM = {
   TABS: undefined,
@@ -82,16 +81,16 @@ function renderMessages(message, tab, dom) {
       const parsedMessage = parseMessageDetails(message.values[i]);
       const messageCard = createMessageCard(parsedMessage);
 
-      tabSettings[message.id].hasLoaded ? dom.insertBefore(messageCard, dom.firstChild) : dom.appendChild(messageCard), (update === undefined && (update = true));
+      indexedTabStates[message.id].hasLoaded ? dom.insertBefore(messageCard, dom.firstChild) : dom.appendChild(messageCard), (update === undefined && (update = true));
     }
 
     if (update) {
-      tabSettings[message.id].hasLoaded = true;
-      tabSettings[message.id].spinner.style.display = "flex";
+      indexedTabStates[message.id].hasLoaded = true;
+      indexedTabStates[message.id].spinner.style.display = "flex";
     }
 
     tab.readHead = message.len;
-    tabSettings[message.id].firstRun = false;
+    indexedTabStates[message.id].firstRun = false;
   }
   else if (message.remove) {
     message.remove = undefined;
@@ -105,9 +104,9 @@ function renderMessages(message, tab, dom) {
   else if (message.first) {
     message.first = undefined;
 
-    tabSettings[message.id].hasLoaded = true;
-    tabSettings[message.id].firstRun = false;
-    tabSettings[message.id].spinner.style.display = "flex";
+    indexedTabStates[message.id].hasLoaded = true;
+    indexedTabStates[message.id].firstRun = false;
+    indexedTabStates[message.id].spinner.style.display = "flex";
   }
 }
 
@@ -136,7 +135,7 @@ function emptyStateDOM() {
 }
 
 function streamChanged(message) {
-  if (tabSettings[message.id].streamer != message.streamer) {
+  if (indexedTabStates[message.id].streamer != message.streamer) {
     const titleElement = document.getElementById(`title${message.id}`);
     const labelElement = document.getElementById(`label${message.id}`);
 
@@ -148,15 +147,15 @@ function streamChanged(message) {
       document.getElementById(`label${message.id}`).textContent = message.streamer;
     }
 
-    tabSettings[message.id].streamer = message.streamer;
-    tabSettings[message.id].message = message;
-    tabSettings[message.id].readHead = 0;
-    tabSettings[message.id].pastMessagesReply = true;
-    tabSettings[message.id].hasLoaded = false;
-    tabSettings[message.id].firstRun = true;
+    indexedTabStates[message.id].streamer = message.streamer;
+    indexedTabStates[message.id].message = message;
+    indexedTabStates[message.id].readHead = 0;
+    indexedTabStates[message.id].pastMessagesReply = true;
+    indexedTabStates[message.id].hasLoaded = false;
+    indexedTabStates[message.id].firstRun = true;
 
-    tabSettings[message.id].dom.innerHTML = ``;
-    tabSettings[message.id].dom.appendChild(emptyStateDOM());
+    indexedTabStates[message.id].dom.innerHTML = ``;
+    indexedTabStates[message.id].dom.appendChild(emptyStateDOM());
   }
 }
 
@@ -232,11 +231,11 @@ function createNewTabState(message) {
   createTab.appendChild(container);
   DOM.TABS_CONTENT.appendChild(createTab);
 
-  tabSettings[message.id] = { readHead: 0, message: message, streamer: message.streamer };
-  tabSettings[message.id].firstRun = true;
-  tabSettings[message.id].dom = document.getElementById(`messages${message.id}`);
-  tabSettings[message.id].spinner = document.getElementById(`waitingSmall${message.id}`);
-  tabSettings[message.id].spinner.style.display = "none";
+  indexedTabStates[message.id] = { readHead: 0, message: message, streamer: message.streamer };
+  indexedTabStates[message.id].firstRun = true;
+  indexedTabStates[message.id].dom = document.getElementById(`messages${message.id}`);
+  indexedTabStates[message.id].spinner = document.getElementById(`waitingSmall${message.id}`);
+  indexedTabStates[message.id].spinner.style.display = "none";
 
   if (!initialTabSet) {
     showTab(message.id);
@@ -276,14 +275,14 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     streamChanged(message);
   }
   else if (message.pastMessagesReply) {
-    !tabSettings[message.id] ? createNewTabState(message) : (tabSettings[message.id].message = message);
+    !indexedTabStates[message.id] ? createNewTabState(message) : (indexedTabStates[message.id].message = message);
   }
 });
 
 document.addEventListener('DOMContentLoaded', () => {
   setInterval(() => {
     browser.tabs.query({}).then((tabs) => tabs.forEach(tab => {
-      isTwitchTab(tab) && sendMessageToTab(tab, { pastMessages: true, first: tabSettings[tab.id] != undefined ? tabSettings[tab.id].firstRun : true });
+      isTwitchTab(tab) && sendMessageToTab(tab, { pastMessages: true, first: indexedTabStates[tab.id] != undefined ? indexedTabStates[tab.id].firstRun : true });
     }));
   }, 1000);
 });
@@ -291,9 +290,9 @@ document.addEventListener('DOMContentLoaded', () => {
 renderPageElements();
 
 setInterval(() => {
-  for (let index = 0; index < tabSettings.length; index++) {
-    const element = tabSettings[index];
+  for (let index = 0; index < indexedTabStates.length; index++) {
+    const tabState = indexedTabStates[index];
 
-    element && element.message && renderMessages(element.message, element, element.dom);
+    tabState && tabState.message && renderMessages(tabState.message, tabState, tabState.dom);
   }
 }, 750);
