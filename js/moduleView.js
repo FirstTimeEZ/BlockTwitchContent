@@ -107,6 +107,7 @@ function renderMessages(message, tab, dom) {
 
     tabSettings[message.id].hasLoaded = true;
     tabSettings[message.id].firstRun = false;
+    tabSettings[message.id].spinner.style.display = "flex";
   }
 }
 
@@ -235,6 +236,7 @@ function createNewTabState(message) {
   tabSettings[message.id].firstRun = true;
   tabSettings[message.id].dom = document.getElementById(`messages${message.id}`);
   tabSettings[message.id].spinner = document.getElementById(`waitingSmall${message.id}`);
+  tabSettings[message.id].spinner.style.display = "none";
 
   if (!initialTabSet) {
     showTab(message.id);
