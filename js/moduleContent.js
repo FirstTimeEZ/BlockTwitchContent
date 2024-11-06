@@ -4,7 +4,7 @@
   const { logDebug, getTitle } = await import(browser.runtime.getURL('') + 'js/exports/app/util.js');
   const { searchFromEnd } = await import(browser.runtime.getURL('') + 'js/exports/ext/search.js');
 
-  let CAPTURED = [];
+  let blockedContent = [];
   let headValue = 0;
   let headUpdate = false;
   let freshContentModule = true;
@@ -25,19 +25,19 @@
 
         if (stream != currentStreamer) {
           currentStreamer = stream;
-          CAPTURED = [];
-          headValue = CAPTURED.length;
-          browser.runtime.sendMessage({ streamChangedReply: true, new: undefined, remove: undefined, len: CAPTURED.length, values: undefined, id: message.tab.id, streamer: stream });
+          blockedContent = [];
+          headValue = blockedContent.length;
+          browser.runtime.sendMessage({ streamChangedReply: true, new: undefined, remove: undefined, len: blockedContent.length, values: undefined, id: message.tab.id, streamer: stream });
           return;
         }
 
         if (freshContentModule || message.first) {
           freshContentModule = false;
 
-          headValue = CAPTURED.length;
+          headValue = blockedContent.length;
           currentStreamer = stream;
 
-          browser.runtime.sendMessage({ pastMessagesReply: true, new: true, remove: undefined, len: CAPTURED.length, values: CAPTURED, id: message.tab.id, streamer: stream, first: true });
+          browser.runtime.sendMessage({ pastMessagesReply: true, new: true, remove: undefined, len: blockedContent.length, values: blockedContent, id: message.tab.id, streamer: stream, first: true });
 
           return;
         }
@@ -50,14 +50,14 @@
           return;
         }
 
-        if (CAPTURED.length > headValue) {
-          headValue = CAPTURED.length;
+        if (blockedContent.length > headValue) {
+          headValue = blockedContent.length;
 
-          browser.runtime.sendMessage({ pastMessagesReply: true, new: true, remove: undefined, len: CAPTURED.length, values: CAPTURED, id: message.tab.id, streamer: stream });
+          browser.runtime.sendMessage({ pastMessagesReply: true, new: true, remove: undefined, len: blockedContent.length, values: blockedContent, id: message.tab.id, streamer: stream });
 
-          if (CAPTURED.length > 225) {
-            CAPTURED.splice(0, CAPTURED.length - 50);
-            headValue = CAPTURED.length;
+          if (blockedContent.length > CONFIG.HISTORY.MAX) {
+            blockedContent.splice(0, blockedContent.length - CONFIG.HISTORY.RETAIN);
+            headValue = blockedContent.length;
             headUpdate = true;
           }
 
@@ -98,7 +98,7 @@
         }
 
         if (matched) {
-          CAPTURED.push(event.data.text);
+          blockedContent.push(event.data.text);
         }
 
         logDebug(CM.MIXIN, event.data.text, event.data.random, matched);

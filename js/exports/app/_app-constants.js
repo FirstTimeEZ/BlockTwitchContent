@@ -19,11 +19,13 @@ export const CONFIG = {
     CHAT_ACTION_SUFFIX: /([A-Za-z0-9_]+?)\.([A-Za-z0-9_]+?)\.ModerationAction:return/,
   },
   HISTORY: {
+    MAX: 225,
+    RETAIN: 50,
     RENDER_MS: 750,
-    UPDATE_MS: 1000,
+    UPDATE_MS: 1000
   },
   DEBOUNCE_MS: 750,
-  IMAGES:{
+  IMAGES: {
     SPINNER: "/icons/waiting.gif"
   }
 };
@@ -75,7 +77,7 @@ export const CSS = {
   CARD_DETAIL_LIST: "details-list",
   CARD_DETAIL_ITEM: "detail-item",
   TITLE: "title",
-  TAB: "tab",  
+  TAB: "tab",
   TABS: "tabs",
   TAB_CONTENT: "tab-content",
   TAB_CONTAINER: "tab-container",
