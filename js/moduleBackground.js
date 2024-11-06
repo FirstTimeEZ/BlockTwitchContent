@@ -137,7 +137,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
       requestHandledWithResponse && sendResponse(requestHandledWithResponse);
     }
     else {
-      if (message.pastMessagesReply) {
+      if (message.pastMessagesReply || message.streamChangedReply) {
         return;
       }
 

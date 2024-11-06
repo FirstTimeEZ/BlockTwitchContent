@@ -140,116 +140,147 @@ function emptyStateDOM() {
   return emptyState;
 }
 
-browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.streamChangedReply) {
-    if (tabSettings[message.id].streamer != message.streamer) {
-      const titleElement = document.getElementById(`title${message.id}`);
-      const labelElement = document.getElementById(`label${message.id}`);
+function streamChanged(message) {
+  if (tabSettings[message.id].streamer != message.streamer) {
+    const titleElement = document.getElementById(`title${message.id}`);
+    const labelElement = document.getElementById(`label${message.id}`);
 
-      if (titleElement) {
-        document.getElementById(`title${message.id}`).textContent = `Removed Message History for ${message.streamer}`;
-      }
-
-      if (labelElement) {
-        document.getElementById(`label${message.id}`).textContent = message.streamer;
-      }
-
-      tabSettings[message.id].streamer = message.streamer;
-      tabSettings[message.id].message = message;
-      tabSettings[message.id].readHead = 0;
-      tabSettings[message.id].pastMessagesReply = true;
-      tabSettings[message.id].hasLoaded = false;
-      tabSettings[message.id].firstRun = true;
-
-      tabSettings[message.id].dom.innerHTML = ``;
-      tabSettings[message.id].dom.appendChild(emptyStateDOM());
+    if (titleElement) {
+      document.getElementById(`title${message.id}`).textContent = `Removed Message History for ${message.streamer}`;
     }
+
+    if (labelElement) {
+      document.getElementById(`label${message.id}`).textContent = message.streamer;
+    }
+
+    tabSettings[message.id].streamer = message.streamer;
+    tabSettings[message.id].message = message;
+    tabSettings[message.id].readHead = 0;
+    tabSettings[message.id].pastMessagesReply = true;
+    tabSettings[message.id].hasLoaded = false;
+    tabSettings[message.id].firstRun = true;
+
+    tabSettings[message.id].dom.innerHTML = ``;
+    tabSettings[message.id].dom.appendChild(emptyStateDOM());
   }
-  else if (message.pastMessagesReply) {
-    if (!tabSettings[message.id]) {
-      tabSettings[message.id] = { readHead: 0, message: message, streamer: message.streamer };
-      const createTabButton = document.createElement('div');
+}
 
-      const toggleButton = document.createElement('div');
-      toggleButton.className = 'toggle-button';
+function createNewTabState(message) {
+  const createTabButton = document.createElement('div');
 
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.id = `button${message.id}`;
+  const toggleButton = document.createElement('div');
+  toggleButton.className = 'toggle-button';
 
-      const label = document.createElement('label');
-      label.id = `label${message.id}`;
-      label.htmlFor = `button${message.id}`;
-      label.title = message.streamer;
-      label.textContent = message.streamer;
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.id = `button${message.id}`;
 
-      toggleButton.appendChild(checkbox);
-      toggleButton.appendChild(label);
-      createTabButton.appendChild(toggleButton);
+  const label = document.createElement('label');
+  label.id = `label${message.id}`;
+  label.htmlFor = `button${message.id}`;
+  label.title = message.streamer;
+  label.textContent = message.streamer;
 
-      toggleButton.addEventListener("click", (e) => {
+  toggleButton.appendChild(checkbox);
+  toggleButton.appendChild(label);
+  createTabButton.appendChild(toggleButton);
 
-        if (!e.target.checked) {
-          e.target.checked = true;
-        }
-        else {
-          document.querySelectorAll('[type="checkbox"]').forEach(button => {
-            if (e.target.id != button.id) {
-              button.checked = false;
-              button.classList.remove("active");
-            }
-          });
+  toggleButton.addEventListener("click", (e) => {
 
-          showTab(message.id);
+    if (!e.target.checked) {
+      e.target.checked = true;
+    }
+    else {
+      document.querySelectorAll('[type="checkbox"]').forEach(button => {
+        if (e.target.id != button.id) {
+          button.checked = false;
+          button.classList.remove("active");
         }
       });
 
-      DOM.TABS.appendChild(createTabButton);
-
-      const createTab = document.createElement('div');
-      createTab.className = 'tab';
-      createTab.id = `tab${message.id}`;
-
-      const container = document.createElement('div');
-      container.className = 'container containerRem';
-
-      const containerFlex = document.createElement('div');
-      containerFlex.className = 'container-flex';
-
-      const title = document.createElement('h1');
-      title.className = 'title';
-      title.id = `title${message.id}`;
-      title.textContent = `Removed Message History for ${message.streamer}`;
-
-      const spinner = document.createElement('img');
-      spinner.src = '/icons/waiting.gif';
-      spinner.className = 'waitingSmall';
-      spinner.id = `waitingSmall${message.id}`;
-
-      containerFlex.appendChild(title);
-      containerFlex.appendChild(spinner);
-      container.appendChild(containerFlex);
-
-      const messagesDiv = document.createElement('div');
-      messagesDiv.id = `messages${message.id}`;
-      messagesDiv.className = 'messages';
-
-      messagesDiv.appendChild(emptyStateDOM());
-      container.appendChild(messagesDiv);
-      createTab.appendChild(container);
-      DOM.TABS_CONTENT.appendChild(createTab);
-
-      tabSettings[message.id].firstRun = true;
-      tabSettings[message.id].dom = document.getElementById(`messages${message.id}`);
-      tabSettings[message.id].spinner = document.getElementById(`waitingSmall${message.id}`);
-
-      if (!initialTabSet) {
-        showTab(message.id);
-        initialTabSet = true;
-      }
-    } else {
-      tabSettings[message.id].message = message;
+      showTab(message.id);
     }
+  });
+
+  DOM.TABS.appendChild(createTabButton);
+
+  const createTab = document.createElement('div');
+  createTab.className = 'tab';
+  createTab.id = `tab${message.id}`;
+
+  const container = document.createElement('div');
+  container.className = 'container containerRem';
+
+  const containerFlex = document.createElement('div');
+  containerFlex.className = 'container-flex';
+
+  const title = document.createElement('h1');
+  title.className = 'title';
+  title.id = `title${message.id}`;
+  title.textContent = `Removed Message History for ${message.streamer}`;
+
+  const spinner = document.createElement('img');
+  spinner.src = '/icons/waiting.gif';
+  spinner.className = 'waitingSmall';
+  spinner.id = `waitingSmall${message.id}`;
+
+  containerFlex.appendChild(title);
+  containerFlex.appendChild(spinner);
+  container.appendChild(containerFlex);
+
+  const messagesDiv = document.createElement('div');
+  messagesDiv.id = `messages${message.id}`;
+  messagesDiv.className = 'messages';
+
+  messagesDiv.appendChild(emptyStateDOM());
+  container.appendChild(messagesDiv);
+  createTab.appendChild(container);
+  DOM.TABS_CONTENT.appendChild(createTab);
+
+  tabSettings[message.id] = { readHead: 0, message: message, streamer: message.streamer };
+  tabSettings[message.id].firstRun = true;
+  tabSettings[message.id].dom = document.getElementById(`messages${message.id}`);
+  tabSettings[message.id].spinner = document.getElementById(`waitingSmall${message.id}`);
+
+  if (!initialTabSet) {
+    showTab(message.id);
+    initialTabSet = true;
+  }
+}
+
+function renderPageElements() {
+  const spinner = document.createElement('img');
+  spinner.src = '/icons/waiting.gif';
+  spinner.className = "waitingSmall";
+  spinner.id = "waitingSmall";
+
+  const tabs = document.createElement('div');
+  tabs.className = 'tabs';
+  tabs.id = 'tabs';
+
+  const containerFlex = document.createElement('div');
+  containerFlex.className = 'container-flex';
+  containerFlex.appendChild(tabs);
+  containerFlex.appendChild(spinner);
+
+  const tabsContent = document.createElement('div');
+  tabsContent.className = 'tab-content';
+  tabsContent.id = 'tab-content';
+
+  const tabContainer = document.getElementById("tc");
+  tabContainer.appendChild(containerFlex);
+  tabContainer.appendChild(tabsContent);
+
+  DOM.TABS = document.getElementById('tabs');
+  DOM.TABS_CONTENT = document.getElementById('tab-content');
+}
+
+browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.streamChangedReply) {
+    streamChanged(message);
+  }
+  else if (message.pastMessagesReply) {
+    !tabSettings[message.id] ? createNewTabState(message) : (tabSettings[message.id].message = message);
   }
 });
 
@@ -261,30 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 1000);
 });
 
-const spinner = document.createElement('img');
-spinner.src = '/icons/waiting.gif';
-spinner.className = "waitingSmall";
-spinner.id = "waitingSmall";
-
-const tabs = document.createElement('div');
-tabs.className = 'tabs';
-tabs.id = 'tabs';
-
-const containerFlex = document.createElement('div');
-containerFlex.className = 'container-flex';
-containerFlex.appendChild(tabs);
-containerFlex.appendChild(spinner);
-
-const tabsContent = document.createElement('div');
-tabsContent.className = 'tab-content';
-tabsContent.id = 'tab-content';
-
-const tabContainer = document.getElementById("tc");
-tabContainer.appendChild(containerFlex);
-tabContainer.appendChild(tabsContent);
-
-DOM.TABS = document.getElementById('tabs');
-DOM.TABS_CONTENT = document.getElementById('tab-content');
+renderPageElements();
 
 setInterval(() => {
   for (let index = 0; index < tabSettings.length; index++) {
