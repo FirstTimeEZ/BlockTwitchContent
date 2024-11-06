@@ -18,7 +18,14 @@ export const CONFIG = {
     CHAT_SHELL: /assets\/pages.channel.components.channel-shell.components.chat-shell.components.chat-live-[0-9a-z]+?\.js/i,
     CHAT_ACTION_SUFFIX: /([A-Za-z0-9_]+?)\.([A-Za-z0-9_]+?)\.ModerationAction:return/,
   },
+  HISTORY: {
+    RENDER_MS: 750,
+    UPDATE_MS: 1000,
+  },
   DEBOUNCE_MS: 750,
+  IMAGES:{
+    SPINNER: "/icons/waiting.gif"
+  }
 };
 
 export const C = {
@@ -33,6 +40,58 @@ export const C = {
   JS_EXT: ".js",
   MAIN: "main_frame",
   PX: "px",
+}
+
+export const HTML = {
+  DIV: "div",
+  IMG: "img",
+  LABEL: "label",
+  INPUT: "input",
+  H1: "h1",
+  PARAGRAPH: "p",
+  SPAN: "span"
+}
+
+export const TYPES = {
+  TEXT: "text",
+  CHECKBOX: "checkbox",
+  BUTTON: "button"
+}
+
+export const UI = {
+  CLICK: "click",
+  INPUT: "input",
+  ACTIVE: "active",
+  MESSAGE: "message",
+  UNLOAD: "unload",
+  MOUSE_DOWN: "mousedown",
+  MOUSE_UP: "mouseup",
+  DOM_LOADED: "DOMContentLoaded",
+  STYLE: "style",
+}
+
+export const CSS = {
+  CARD_DETAIL: "card-icon-detail",
+  CARD_DETAIL_LIST: "details-list",
+  CARD_DETAIL_ITEM: "detail-item",
+  TITLE: "title",
+  TAB: "tab",  
+  TABS: "tabs",
+  TAB_CONTENT: "tab-content",
+  TAB_CONTAINER: "tab-container",
+  EMPTY_STATE: "empty-state",
+  TOGGLE_BUTTON: "toggle-button",
+  CONTAINER_FLEX: "container-flex",
+  SPINNER: "waitingSmall",
+  MESSAGES: "messages",
+  MESSAGE_CARD: "message-card",
+  MESSAGE_CONTENT: "message-content",
+  BASE_CONTAINER: "container containerRem",
+}
+
+export const STYLE = {
+  FLEX: "flex",
+  NONE: "none"
 }
 
 export const CM = {
@@ -67,21 +126,15 @@ export const PM = {
   DESTROYED: "popupModule::domDestroyed",
 }
 
+export const MV = {
+  HEADING: "Message History for ",
+  EMPTY_STATE_MESSAGE: `New messages will be added automatically above, Old messages appear below.
+  If there are no messages, nothing has been blocked, You can wait or come back later.`,
+}
+
 export const ICON = {
   ENABLED: "icons/icon-e.png",
   DISABLED: "icons/icon-d.png"
-}
-
-export const UI = {
-  CLICK: "click",
-  INPUT: "input",
-  ACTIVE: "active",
-  MESSAGE: "message",
-  UNLOAD: "unload",
-  MOUSE_DOWN: "mousedown",
-  MOUSE_UP: "mouseup",
-  DOM_LOADED: "DOMContentLoaded",
-  STYLE: "style",
 }
 
 export const COMMON_BOTS = [
