@@ -4,10 +4,11 @@
   const { logDebug } = await import(browser.runtime.getURL('') + 'js/exports/app/util.js');
   const { searchFromEnd } = await import(browser.runtime.getURL('') + 'js/exports/ext/search.js');
 
-  const CAPTURED = [];
-
+  let CAPTURED = [];
   let headValue = 0;
   let headUpdate = false;
+  let freshContentModule = true;
+  let currentStreamer = "";
 
   browser.runtime.onMessage.addListener((message, sender, sendResponse) => { // Listen for messages from the BackgroundModule
     if (sender.id == CONFIG.SENDER_UUID && sender.envType == CONFIG.SCRIPTS.OPTIONS) {
@@ -20,29 +21,50 @@
         location.reload();
       }
       else if (message.pastMessages) {
-        let stream = message.tab.title.replace(" - Twitch", "");
-        if (message.first) {
+        let stream = document.title.replace(" - Twitch", "").toUpperCase();
+
+        if (stream != currentStreamer) {
+          currentStreamer = stream;
+          CAPTURED = [];
+          headValue = CAPTURED.length;
+          browser.runtime.sendMessage({ streamChangedReply: true, new: undefined, remove: undefined, len: CAPTURED.length, values: undefined, id: message.tab.id, streamer: stream });
+          return;
+        }
+
+        if (freshContentModule || message.first) {
+          freshContentModule = false;
+
+          headValue = CAPTURED.length;
+          currentStreamer = stream;
+
+          browser.runtime.sendMessage({ pastMessagesReply: true, new: true, remove: undefined, len: CAPTURED.length, values: CAPTURED, id: message.tab.id, streamer: stream });
+
+          return;
+        }
+
+        if (headUpdate) {
+          headUpdate = false;
+
+          browser.runtime.sendMessage({ pastMessagesReply: true, new: undefined, remove: true, len: headValue, values: undefined, id: message.tab.id, streamer: stream });
+
+          return;
+        }
+
+        if (CAPTURED.length > headValue) {
           headValue = CAPTURED.length;
 
           browser.runtime.sendMessage({ pastMessagesReply: true, new: true, remove: undefined, len: CAPTURED.length, values: CAPTURED, id: message.tab.id, streamer: stream });
-        } else {
-          if (CAPTURED.length > headValue) {
+
+          if (CAPTURED.length > 225) {
+            CAPTURED.splice(0, CAPTURED.length - 50);
             headValue = CAPTURED.length;
-
-            browser.runtime.sendMessage({ pastMessagesReply: true, new: true, remove: undefined, len: CAPTURED.length, values: CAPTURED, id: message.tab.id, streamer: stream });
-
-            if (CAPTURED.length > 225) {
-              CAPTURED.splice(0, CAPTURED.length - 50);
-              headValue = CAPTURED.length;
-              headUpdate = true;
-            }
+            headUpdate = true;
           }
-          else if (headUpdate) {
-            headUpdate = false;
 
-            browser.runtime.sendMessage({ pastMessagesReply: true, new: undefined, remove: true, len: headValue, values: undefined, id: message.tab.id, streamer: stream });
-          }
+          return;
         }
+
+        logDebug("Unhandled Message in Content Module", message);
       }
       else {
         logDebug(CM.UNKNOWN, message, message.tab, sender);

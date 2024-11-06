@@ -127,10 +127,52 @@ function showTab(tabId) {
   button.checked = true;
 }
 
+function emptyStateDOM() {
+  const emptyState = document.createElement('div');
+  emptyState.className = 'empty-state';
+
+  const emptySpinner = document.createElement('img');
+  emptySpinner.src = '/icons/waiting.gif';
+  emptySpinner.className = 'waitingSmall';
+
+  const emptyMessage = document.createElement('p');
+  emptyMessage.textContent = `No messages have been blocked yet. You can come back later or wait. New messages will be added automatically.`;
+
+  emptyState.appendChild(emptySpinner);
+  emptyState.appendChild(emptyMessage);
+
+  return emptyState;
+}
+
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.pastMessagesReply) {
+  if (message.streamChangedReply) {
+    if (tabSettings[message.id].streamer != message.streamer) {
+      const titleElement = document.getElementById(`title${message.id}`);
+      const labelElement = document.getElementById(`label${message.id}`);
+
+      if (titleElement) {
+        document.getElementById(`title${message.id}`).textContent = `Removed Message History for ${message.streamer}`;
+      }
+
+      if (labelElement) {
+        document.getElementById(`label${message.id}`).textContent = message.streamer;
+      }
+
+      tabSettings[message.id].streamer = message.streamer;
+      tabSettings[message.id].message = message;
+      tabSettings[message.id].readHead = 0;
+      tabSettings[message.id].pastMessagesReply = true;
+      tabSettings[message.id].firstMessage = true;
+
+      tabSettings[message.id].dom.innerHTML = ``;
+      tabSettings[message.id].dom.appendChild(emptyStateDOM());
+
+      firstUpdate = true;
+    }
+  }
+  else if (message.pastMessagesReply) {
     if (!tabSettings[message.id]) {
-      tabSettings[message.id] = { readHead: 0, message: message, firstMessage: true };
+      tabSettings[message.id] = { readHead: 0, message: message, firstMessage: true, streamer: message.streamer };
       const createTabButton = document.createElement('div');
 
       const toggleButton = document.createElement('div');
@@ -141,6 +183,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
       checkbox.id = `button${message.id}`;
 
       const label = document.createElement('label');
+      label.id = `label${message.id}`;
       label.htmlFor = `button${message.id}`;
       label.title = message.streamer;
       label.textContent = message.streamer;
@@ -180,6 +223,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
       const title = document.createElement('h1');
       title.className = 'title';
+      title.id = `title${message.id}`;
       title.textContent = `Removed Message History for ${message.streamer}`;
 
       const spinner = document.createElement('img');
@@ -195,19 +239,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
       messagesDiv.id = `messages${message.id}`;
       messagesDiv.className = 'messages';
 
-      const emptyState = document.createElement('div');
-      emptyState.className = 'empty-state';
-
-      const emptySpinner = document.createElement('img');
-      emptySpinner.src = '/icons/waiting.gif';
-      emptySpinner.className = 'waitingSmall';
-
-      const emptyMessage = document.createElement('p');
-      emptyMessage.textContent = `No messages have been blocked yet. You can come back later or wait. New messages will be added automatically.`;
-
-      emptyState.appendChild(emptySpinner);
-      emptyState.appendChild(emptyMessage);
-      messagesDiv.appendChild(emptyState);
+      messagesDiv.appendChild(emptyStateDOM());
       container.appendChild(messagesDiv);
       createTab.appendChild(container);
       DOM.TABS_CONTENT.appendChild(createTab);
