@@ -33,6 +33,9 @@ export const reloadTab = (tab) => {
   }
 }
 
-export const sendMessageToTab = (tab, message) => browser.tabs.sendMessage(tab.id, message).catch(error => logError("tabs::errorBroadcasting", error));
+export const sendMessageToTab = (tab, message) => {
+  message.tab = tab;
+  browser.tabs.sendMessage(tab.id, message).catch(error => logError("tabs::errorBroadcasting", error));
+}
 
 export const isTwitchTab = tab => tab.url.includes("twitch.tv") && !tab.url.includes("supervisor");

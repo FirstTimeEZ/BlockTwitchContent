@@ -1,6 +1,6 @@
-let firstUpdate = true;
-let hasLoaded = false;
-let tabActive = false;
+import { isTwitchTab, sendMessageToTab } from "./exports/app/tabs.js";
+
+let initialTabSet = false;
 
 let tabSettings = [];
 
@@ -77,12 +77,7 @@ function parseMessageDetails(message) {
 function renderMessages(message, tab, dom) {
   if (message.new && message.len > tab.readHead) {
 
-    if (tabSettings[message.id].firstMessage) {
-      tabSettings[message.id].dom.innerHTML = ``;
-      tabSettings[message.id].firstMessage = false;
-    }
-
-    if (hasLoaded) {
+    if (tabSettings[message.id].hasLoaded) {
       for (let i = message.len - 1; i >= tab.readHead; i--) {
         const parsedMessage = parseMessageDetails(message.values[i]);
         const messageCard = createMessageCard(parsedMessage);
@@ -97,11 +92,12 @@ function renderMessages(message, tab, dom) {
         const messageCard = createMessageCard(parsedMessage);
         dom.appendChild(messageCard);
       }
+
+      tabSettings[message.id].hasLoaded = true;
     }
 
     tab.readHead = message.len;
-
-    return true;
+    tabSettings[message.id].emptyStateVisible && (tabSettings[message.id].emptyStateVisible = false);
   }
   else if (message.remove) {
     message.remove = undefined;
@@ -110,8 +106,6 @@ function renderMessages(message, tab, dom) {
 
     browser.runtime.sendMessage({ requestPastMessages: true, flushed: true, first: false });
   }
-
-  return false;
 }
 
 function showTab(tabId) {
@@ -128,14 +122,11 @@ function emptyStateDOM() {
   const emptyState = document.createElement('div');
   emptyState.className = 'empty-state';
 
-  const emptySpinner = document.createElement('img');
-  emptySpinner.src = '/icons/waiting.gif';
-  emptySpinner.className = 'waitingSmall';
-
   const emptyMessage = document.createElement('p');
-  emptyMessage.textContent = `No messages have been blocked yet. You can come back later or wait. New messages will be added automatically.`;
+  emptyMessage.textContent = `New messages will be added automatically above, Old messages appear below.
+  If there are no messages, nothing has been blocked, You can wait or come back later.
+  `;
 
-  emptyState.appendChild(emptySpinner);
   emptyState.appendChild(emptyMessage);
 
   return emptyState;
@@ -159,17 +150,16 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
       tabSettings[message.id].message = message;
       tabSettings[message.id].readHead = 0;
       tabSettings[message.id].pastMessagesReply = true;
-      tabSettings[message.id].firstMessage = true;
+      tabSettings[message.id].hasLoaded = false;
 
       tabSettings[message.id].dom.innerHTML = ``;
       tabSettings[message.id].dom.appendChild(emptyStateDOM());
-
-      firstUpdate = true;
+      tabSettings[message.id].emptyStateVisible = true;
     }
   }
   else if (message.pastMessagesReply) {
     if (!tabSettings[message.id]) {
-      tabSettings[message.id] = { readHead: 0, message: message, firstMessage: true, streamer: message.streamer };
+      tabSettings[message.id] = { readHead: 0, message: message, streamer: message.streamer };
       const createTabButton = document.createElement('div');
 
       const toggleButton = document.createElement('div');
@@ -240,13 +230,14 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
       container.appendChild(messagesDiv);
       createTab.appendChild(container);
       DOM.TABS_CONTENT.appendChild(createTab);
+      tabSettings[message.id].emptyStateVisible = true;
 
       tabSettings[message.id].dom = document.getElementById(`messages${message.id}`);
       tabSettings[message.id].spinner = document.getElementById(`waitingSmall${message.id}`);
 
-      if (!tabActive) {
+      if (!initialTabSet) {
         showTab(message.id);
-        tabActive = true;
+        initialTabSet = true;
       }
     } else {
       tabSettings[message.id].message = message;
@@ -255,10 +246,15 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-  browser.runtime.sendMessage({ requestPastMessages: true, flushed: false, first: firstUpdate });
   setInterval(() => {
-    browser.runtime.sendMessage({ requestPastMessages: true, flushed: false, first: firstUpdate });
-  }, 1100);
+    browser.tabs.query({}).then((tabs) => {
+      tabs.forEach(tab => {
+        if (isTwitchTab(tab)) {
+          sendMessageToTab(tab, { pastMessages: true, flushed: false, first: tabSettings[tab.id] != undefined ? tabSettings[tab.id].emptyStateVisible : true });
+        }
+      });
+    });
+  }, 1000);
 });
 
 const spinner = document.createElement('img');
@@ -287,21 +283,9 @@ DOM.TABS = document.getElementById('tabs');
 DOM.TABS_CONTENT = document.getElementById('tab-content');
 
 setInterval(() => {
-  let anyLoaded = false;
-
   for (let index = 0; index < tabSettings.length; index++) {
     const element = tabSettings[index];
 
-    if (element && element.message) {
-
-      const thisElementLoaded = renderMessages(element.message, element, element.dom);
-
-      !anyLoaded && thisElementLoaded && (anyLoaded = true);
-    }
+    element && element.message && renderMessages(element.message, element, element.dom);
   }
-
-  if (anyLoaded) {
-    firstUpdate = false;
-    hasLoaded = true;
-  }
-}, 1000);
+}, 750);

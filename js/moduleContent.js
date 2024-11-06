@@ -63,8 +63,6 @@
 
           return;
         }
-
-        logDebug("Unhandled Message in Content Module", message);
       }
       else {
         logDebug(CM.UNKNOWN, message, message.tab, sender);
