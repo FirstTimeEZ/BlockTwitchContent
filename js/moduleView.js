@@ -153,7 +153,7 @@ function streamChanged(message) {
     indexedTabStates[message.id].hasLoaded = false;
     indexedTabStates[message.id].firstRun = true;
 
-    indexedTabStates[message.id].dom.innerHTML = C.EMPTY;
+    indexedTabStates[message.id].dom.innerHTML = '';
     indexedTabStates[message.id].dom.appendChild(emptyStateDOM());
   }
 }
