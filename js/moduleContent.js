@@ -1,7 +1,7 @@
 (async () => {
   const { STATE, requestState } = await import(browser.runtime.getURL('') + 'js/exports/app/state.js');
   const { CONFIG, C, CM, URI, UI, COMMON_BOTS, COMMON_COMMANDS_S } = await import(browser.runtime.getURL('') + 'js/exports/app/_app-constants.js');
-  const { logDebug } = await import(browser.runtime.getURL('') + 'js/exports/app/util.js');
+  const { logDebug, getTitle } = await import(browser.runtime.getURL('') + 'js/exports/app/util.js');
   const { searchFromEnd } = await import(browser.runtime.getURL('') + 'js/exports/ext/search.js');
 
   let CAPTURED = [];
@@ -21,7 +21,7 @@
         location.reload();
       }
       else if (message.pastMessages) {
-        let stream = document.title.replace(" - Twitch", "").toUpperCase();
+        let stream = getTitle();
 
         if (stream != currentStreamer) {
           currentStreamer = stream;
@@ -111,5 +111,5 @@
   });
 
   requestState(CM.CONTENT);
-  console.log(CM.LOADED);
+  console.log(CM.LOADED, getTitle());
 })();

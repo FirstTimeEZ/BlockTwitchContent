@@ -8,3 +8,5 @@ export const isValidSender = sender => sender.id === CONFIG.SENDER_UUID && (send
 export const logDebug = (...args) => STATE.debugSetting && console.log(...args);
 
 export const logError = (...args) => console.error(...args);
+
+export const getTitle = () => document.title.replace(" - Twitch", "").toUpperCase();

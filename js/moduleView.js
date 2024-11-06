@@ -5,9 +5,6 @@ let tabActive = false;
 let tabSettings = [];
 
 const DOM = {
-  MESSAGES: document.getElementById('messages'),
-  TAB1: document.getElementById('tab1b'),
-  TAB2: document.getElementById('tab2b'),
   TABS: undefined,
   TABS_CONTENT: undefined
 };
@@ -253,7 +250,6 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
       }
     } else {
       tabSettings[message.id].message = message;
-      console.log(tabSettings[message.id].message);
     }
   }
 });
@@ -264,6 +260,31 @@ document.addEventListener('DOMContentLoaded', () => {
     browser.runtime.sendMessage({ requestPastMessages: true, flushed: false, first: firstUpdate });
   }, 1100);
 });
+
+const spinner = document.createElement('img');
+spinner.src = '/icons/waiting.gif';
+spinner.className = "waitingSmall";
+spinner.id = "waitingSmall";
+
+const tabs = document.createElement('div');
+tabs.className = 'tabs';
+tabs.id = 'tabs';
+
+const containerFlex = document.createElement('div');
+containerFlex.className = 'container-flex';
+containerFlex.appendChild(tabs);
+containerFlex.appendChild(spinner);
+
+const tabsContent = document.createElement('div');
+tabsContent.className = 'tab-content';
+tabsContent.id = 'tab-content';
+
+const tabContainer = document.getElementById("tc");
+tabContainer.appendChild(containerFlex);
+tabContainer.appendChild(tabsContent);
+
+DOM.TABS = document.getElementById('tabs');
+DOM.TABS_CONTENT = document.getElementById('tab-content');
 
 setInterval(() => {
   let anyLoaded = false;
@@ -284,30 +305,3 @@ setInterval(() => {
     hasLoaded = true;
   }
 }, 1000);
-
-var tabContainer = document.getElementById("tc");
-
-const spinner = document.createElement('img');
-spinner.src = '/icons/waiting.gif';
-spinner.className = "waitingSmall";
-spinner.id = "waitingSmall";
-
-const tabs = document.createElement('div');
-tabs.className = 'tabs';
-tabs.id = 'tabs';
-
-const containerFlex = document.createElement('div');
-containerFlex.className = 'container-flex';
-containerFlex.appendChild(tabs);
-containerFlex.appendChild(spinner);
-
-tabContainer.appendChild(containerFlex);
-
-const tabsContent = document.createElement('div');
-tabsContent.className = 'tab-content';
-tabsContent.id = 'tab-content';
-
-tabContainer.appendChild(tabsContent);
-
-DOM.TABS = document.getElementById('tabs');
-DOM.TABS_CONTENT = document.getElementById('tab-content');
