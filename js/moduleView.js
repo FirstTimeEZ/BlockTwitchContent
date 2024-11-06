@@ -271,17 +271,19 @@ function renderPageElements() {
 
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.streamChangedReply) {
+    indexedTabStates[message.id] === undefined && createNewTabState(message);
+
     streamChanged(message);
   }
   else if (message.pastMessagesReply) {
-    !indexedTabStates[message.id] ? createNewTabState(message) : (indexedTabStates[message.id].message = message);
+    indexedTabStates[message.id] === undefined ? createNewTabState(message) : (indexedTabStates[message.id].message = message);
   }
 });
 
 document.addEventListener(UI.DOM_LOADED, () => {
   setInterval(() => {
     browser.tabs.query({}).then((tabs) => tabs.forEach(tab => {
-      isTwitchTab(tab) && sendMessageToTab(tab, { pastMessages: true, first: indexedTabStates[tab.id] != undefined ? indexedTabStates[tab.id].firstRun : true });
+      isTwitchTab(tab) && sendMessageToTab(tab, { pastMessages: true, first: indexedTabStates[tab.id] !== undefined ? indexedTabStates[tab.id].firstRun : true });
     }));
   }, CONFIG.HISTORY.UPDATE_MS);
 });
