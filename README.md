@@ -2,7 +2,7 @@
 
 [![](https://i.imgur.com/3BynCoO.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/)
 
-A [`Firefox Extension`](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/) that blocks `Chat Content` on [`Twitch`](https://www.twitch.tv) using various identifiers, phrases, or simply a display name.
+A [`Firefox Extension`](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/) that removes unwanted content from the [Twitch](https://www.twitch.tv) chat using various identifiers, phrases or simply a display name. Can also remove sub notifications, highlighted comments, service messages and block common types of spam quickly using default settings.
 
 [![](https://i.imgur.com/daNrPlm.png)](https://addons.mozilla.org/en-US/firefox/addon/block-twitch-content/)
 
