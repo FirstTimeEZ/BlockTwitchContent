@@ -45,13 +45,20 @@
 
   function checkStreamHasChanged() {
     const stream = getTitle();
-    
+
     if (stream && lastStreamer !== stream) {
       lastStreamer = stream;
       lastStreamerLower = stream.toLowerCase();
       lastSent = 0;
       timesFlushed = 0;
       blockedContent = [];
+
+      if (document.querySelector(CONFIG.VIDEO_PLAYER) !== null) {
+        const m = createMessage();
+        m.readto = -1;
+        browser.runtime.sendMessage(m);
+      }
+
       console.log(CM.LOADED, stream);
     }
   }

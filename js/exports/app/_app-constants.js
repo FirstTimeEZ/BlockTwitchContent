@@ -24,6 +24,7 @@ export const CONFIG = {
     RENDER_MS: 750,
     UPDATE_MS: 1000
   },
+  VIDEO_PLAYER: '[data-a-target="player-overlay-click-handler"]',
   DEBOUNCE_MS: 750,
   IMAGES: {
     SPINNER: "/icons/waiting.gif"
