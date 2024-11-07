@@ -6,15 +6,21 @@ import { decodeData, isValidSender, logDebug } from "./exports/app/util.js";
 import { insertFragmentListener, removeFragmentListener } from "./exports/app/fragments.js";
 import { broadcastToTwitchTabs, broadcastToTwitchTabsCallback, reloadTab } from "./exports/app/tabs.js";
 
+let streamerData = [];
+
 const requestHandlers = {
   requestForState: () => getStorageItemStates(),
   requestForStateUpdate: () => { getStorageItemStates(); broadcastToTwitchTabs({ refreshState: true }); },
-  requestForSettingsTab: () => {
-    browser.tabs.create({
-      url: browser.runtime.getURL("") + "view.html"
-    });
-  }
-};
+  requestForSettingsTab: () => openHistoryPage(),
+  requestContent: () => { return { streamerData: streamerData } },
+  contentModuleUpdate: (message) => { updateContentModuleData(message); },
+}
+
+function updateContentModuleData(message) {
+  let found = streamerData.find((data) => data.streamer == message.streamer);
+
+  found !== undefined ? Object.assign(found, message) : streamerData.push(message);
+}
 
 function checkChatShell(details) {
   const data = [];
@@ -125,6 +131,12 @@ function checkGQL(details) {
     filter.close();
     data.length = 0;
   }
+}
+
+function openHistoryPage() {
+  browser.tabs.create({
+    url: browser.runtime.getURL("") + "view.html"
+  });
 }
 
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
