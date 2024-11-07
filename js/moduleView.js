@@ -1,5 +1,6 @@
 import { isTwitchTab, sendMessageToTab } from "./exports/app/tabs.js";
-import { UI, CONFIG, HTML, CSS, STYLE, TYPES, C, MV } from "./exports/app/_app-constants.js";
+import { UI, CONFIG, HTML, CSS, STYLE, TYPES, C, MV, URI } from "./exports/app/_app-constants.js";
+import { logError } from "./exports/app/util.js";
 
 const DOM = {
   TABS: undefined,
@@ -75,10 +76,10 @@ function parseMessageDetails(message) {
 }
 
 function renderMessages(message, tab, dom) {
-  if (message.new && message.len > tab.readHead) {
+  if (message.new && message.values.length > tab.readHead) {
     let update = undefined;
 
-    for (let i = message.len - 1; i >= tab.readHead; i--) {
+    for (let i = message.values.length - 1; i >= tab.readHead; i--) {
       const parsedMessage = parseMessageDetails(message.values[i]);
       const messageCard = createMessageCard(parsedMessage);
 
@@ -90,17 +91,15 @@ function renderMessages(message, tab, dom) {
       indexedTabStates[message.id].spinner.style.display = STYLE.FLEX;
     }
 
-    tab.readHead = message.len;
+    tab.readHead = message.values.length;
     indexedTabStates[message.id].firstRun = false;
   }
   else if (message.remove) {
     message.remove = undefined;
 
-    tab.readHead = message.len;
+    tab.readHead = message.values.length;
 
-    browser.tabs.query({}).then((tabs) => tabs.forEach(tab => {
-      isTwitchTab(tab) && tab.id == message.id && sendMessageToTab(tab, { pastMessages: true });
-    }));
+    browser.tabs.query({ url: indexedTabStates[message.id].uri }).then((tabs) => tabs[0] && isTwitchTab(tabs[0]) && sendMessageToTab(tabs[0], { pastMessages: true })).catch((e) => { logError(e); });
   }
   else if (message.first) {
     message.first = undefined;
@@ -147,14 +146,17 @@ function streamChanged(message) {
     }
 
     indexedTabStates[message.id].streamer = message.streamer;
-    indexedTabStates[message.id].message = message;
+    indexedTabStates[message.id].message = undefined;
+    indexedTabStates[message.id].values = undefined;
     indexedTabStates[message.id].readHead = 0;
-    indexedTabStates[message.id].pastMessagesReply = true;
     indexedTabStates[message.id].hasLoaded = false;
     indexedTabStates[message.id].firstRun = true;
+    indexedTabStates[message.id].uri = URI.TWITCH + message.streamer.toLowerCase();
 
     indexedTabStates[message.id].dom.innerHTML = '';
     indexedTabStates[message.id].dom.appendChild(emptyStateDOM());
+
+    console.log(indexedTabStates[message.id]);
   }
 }
 
@@ -235,6 +237,7 @@ function createNewTabState(message) {
   indexedTabStates[message.id].dom = document.getElementById(`${CSS.MESSAGES}${message.id}`);
   indexedTabStates[message.id].spinner = document.getElementById(`${CSS.SPINNER}${message.id}`);
   indexedTabStates[message.id].spinner.style.display = STYLE.NONE;
+  indexedTabStates[message.id].uri = URI.TWITCH + message.streamer.toLowerCase();
 
   if (!initialTabSet) {
     showTab(message.id);
@@ -271,8 +274,6 @@ function renderPageElements() {
 
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.streamChangedReply) {
-    indexedTabStates[message.id] === undefined && createNewTabState(message);
-
     streamChanged(message);
   }
   else if (message.pastMessagesReply) {
@@ -284,7 +285,7 @@ document.addEventListener(UI.DOM_LOADED, () => {
   setInterval(() => {
     browser.tabs.query({}).then((tabs) => tabs.forEach(tab => {
       isTwitchTab(tab) && sendMessageToTab(tab, { pastMessages: true, first: indexedTabStates[tab.id] !== undefined ? indexedTabStates[tab.id].firstRun : true });
-    }));
+    })).catch((e)=>{ logError(e)});
   }, CONFIG.HISTORY.UPDATE_MS);
 });
 
@@ -294,6 +295,15 @@ setInterval(() => {
   for (let index = 0; index < indexedTabStates.length; index++) {
     const tabState = indexedTabStates[index];
 
-    tabState && tabState.message && renderMessages(tabState.message, tabState, tabState.dom);
+    if (tabState && tabState.message) {
+      if (tabState.message.streamer !== tabState.streamer) {
+        streamChanged(tabState.message);
+
+        browser.tabs.query({ url: tabState.uri }).then((tabs) => tabs[0] && isTwitchTab(tabs[0]) && sendMessageToTab(tabs[0], { streamChanged: true })).catch((e) => { logError(e); });
+      }
+      else {
+        renderMessages(tabState.message, tabState, tabState.dom);
+      }
+    }
   }
 }, CONFIG.HISTORY.RENDER_MS);

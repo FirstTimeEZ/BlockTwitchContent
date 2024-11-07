@@ -102,11 +102,12 @@ export const CM = {
   FRAG_F: "f",
   FRAG_W: "w",
   CONTENT: "contentModule",
-  LOADED: "contentModule::Loaded",
+  LOADED: "contentModule::loaded",
   REFRESH: "contentModule::refreshPageRequest",
   UNKNOWN: "contentModule::unknownMessage",
   INVALID: "contentModule::invalidMessage",
   MIXIN: "contentModule::mixinMessage",
+  CHANGED: "contentModule::changedStream",
 }
 
 export const URI = {

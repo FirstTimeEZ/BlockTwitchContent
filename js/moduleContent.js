@@ -5,10 +5,8 @@
   const { searchFromEnd } = await import(browser.runtime.getURL('') + 'js/exports/ext/search.js');
 
   let blockedContent = [];
-  let headValue = 0;
   let headUpdate = false;
   let freshContentModule = true;
-  let currentStreamer = "";
 
   browser.runtime.onMessage.addListener((message, sender, sendResponse) => { // Listen for messages from the BackgroundModule
     if (sender.id == CONFIG.SENDER_UUID && sender.envType == CONFIG.SCRIPTS.OPTIONS) {
@@ -20,22 +18,13 @@
 
         location.reload();
       }
-      else if (message.pastMessages) {
-        let stream = getTitle();
 
-        if (stream != currentStreamer) {
-          currentStreamer = stream;
-          blockedContent = [];
-          headValue = blockedContent.length;
-          browser.runtime.sendMessage({ streamChangedReply: true, new: undefined, remove: undefined, len: blockedContent.length, values: undefined, id: message.tab.id, streamer: stream });
-          return;
-        }
+      stream = getTitle();
+
+      if (message.pastMessages) {
 
         if (freshContentModule || message.first) {
           freshContentModule = false;
-
-          headValue = blockedContent.length;
-          currentStreamer = stream;
 
           browser.runtime.sendMessage({ pastMessagesReply: true, new: true, remove: undefined, len: blockedContent.length, values: blockedContent, id: message.tab.id, streamer: stream, first: true });
 
@@ -50,19 +39,19 @@
           return;
         }
 
-        if (blockedContent.length > headValue) {
-          headValue = blockedContent.length;
+        browser.runtime.sendMessage({ pastMessagesReply: true, new: true, remove: undefined, len: blockedContent.length, values: blockedContent, id: message.tab.id, streamer: stream });
 
-          browser.runtime.sendMessage({ pastMessagesReply: true, new: true, remove: undefined, len: blockedContent.length, values: blockedContent, id: message.tab.id, streamer: stream });
-
-          if (blockedContent.length > CONFIG.HISTORY.MAX) {
-            blockedContent.splice(0, blockedContent.length - CONFIG.HISTORY.RETAIN);
-            headValue = blockedContent.length;
-            headUpdate = true;
-          }
-
-          return;
+        if (blockedContent.length > CONFIG.HISTORY.MAX) {
+          blockedContent.splice(0, blockedContent.length - CONFIG.HISTORY.RETAIN);
+          headUpdate = true;
         }
+
+        return;
+      }
+      else if (message.streamChanged) {
+        console.log(CM.CHANGED, stream);
+        blockedContent = [];
+        browser.runtime.sendMessage({ streamChangedReply: true, new: undefined, remove: undefined, len: blockedContent.length, values: undefined, id: message.tab.id, streamer: stream });
       }
       else {
         logDebug(CM.UNKNOWN, message, message.tab, sender);
