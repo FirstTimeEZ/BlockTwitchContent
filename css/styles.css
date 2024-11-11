@@ -404,6 +404,7 @@ textarea:hover {
     justify-content: left;
     gap: 8px;
     margin: 8px 0;
+    flex-wrap: wrap;
 }
 
 .tab-content {
