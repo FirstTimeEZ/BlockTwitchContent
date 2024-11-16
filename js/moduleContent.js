@@ -6,10 +6,8 @@
 
   let blockedContent = [];
 
-  let lastSent = 0;
   let lastStreamer = "";
   let lastStreamerLower = "";
-  let timesFlushed = 0;
 
   function searchComment(event) {
     if (event.data.text[0] === C.AT && searchFromEnd(event.data.text, CM.COMMENT)) {
@@ -31,16 +29,6 @@
     }
 
     return false;
-  }
-
-  function flush() {
-    blockedContent.splice(0, blockedContent.length - CONFIG.HISTORY.RETAIN);
-    timesFlushed++;
-  }
-
-  function createMessage() {
-    lastSent = blockedContent.length;
-    return { contentModuleUpdate: true, streamer: lastStreamer, values: blockedContent, readto: lastSent, timesflushed: timesFlushed };
   }
 
   function checkStreamHasChanged() {
@@ -106,9 +94,10 @@
   });
 
   setInterval(() => {
-    if (blockedContent.length > lastSent) {
-      blockedContent.length > CONFIG.HISTORY.MAX && flush();
-      browser.runtime.sendMessage(createMessage());
+    const len = blockedContent.length;
+    if (len > 0) {
+      const newValues = blockedContent.splice(0, len);
+      browser.runtime.sendMessage({ contentModuleUpdateNew: true, streamer: lastStreamer, newValues: newValues, newValuesLen: newValues.length });
     }
   }, CONFIG.HISTORY.UPDATE_MS);
 
