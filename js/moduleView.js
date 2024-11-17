@@ -209,6 +209,38 @@ function renderPageElements() {
   DOM.TABS_CONTENT = document.getElementById(CSS.TAB_CONTENT);
 }
 
+function renderMessages(message, dom, id) {
+  if (message.values.length > indexedTabStates[id].readHead) {
+    let update = undefined;
+
+    for (let i = message.values.length - 1; i >= indexedTabStates[id].readHead; i--) {
+      const parsedMessage = parseMessageDetails(message.values[i]);
+      const messageCard = createMessageCard(parsedMessage);
+
+      indexedTabStates[id].hasLoaded ? dom.insertBefore(messageCard, dom.firstChild) : dom.appendChild(messageCard), (update === undefined && (update = true));
+    }
+
+    if (update) {
+      indexedTabStates[id].hasLoaded = true;
+      indexedTabStates[id].spinner.style.display = STYLE.FLEX;
+    }
+
+    indexedTabStates[id].readHead = message.values.length;
+    indexedTabStates[id].firstRun = false;
+  }
+  else if (message.flushCount > indexedTabStates[id].flushCount) {
+    indexedTabStates[id].flushCount = message.flushCount;
+    indexedTabStates[id].readHead = message.afterFlushCount;
+  }
+  else if (!indexedTabStates[id].renderedOnce && message.values.length === 0) {
+    indexedTabStates[id].readHead = 0;
+    indexedTabStates[id].hasLoaded = true;
+    indexedTabStates[id].firstRun = false;
+    indexedTabStates[id].spinner.style.display = STYLE.FLEX;
+    indexedTabStates[id].renderedOnce = true;
+  }
+}
+
 document.addEventListener(UI.DOM_LOADED, () => setInterval(() => {
   browser.runtime.sendMessage({ requestContent: true }).then((e) => {
     for (let index = 0; index < e.streamerData.length; index++) {
@@ -231,34 +263,3 @@ setInterval(() => {
     tabState && tabState.message && renderMessages(tabState.message, tabState.dom, index);
   }
 }, CONFIG.HISTORY.RENDER_MS);
-
-function renderMessages(message, dom, id) {
-  if (message.readto > indexedTabStates[id].readHead) {
-    let update = undefined;
-
-    for (let i = message.readto - 1; i >= indexedTabStates[id].readHead; i--) {
-      const parsedMessage = parseMessageDetails(message.values[i]);
-      const messageCard = createMessageCard(parsedMessage);
-
-      indexedTabStates[id].hasLoaded ? dom.insertBefore(messageCard, dom.firstChild) : dom.appendChild(messageCard), (update === undefined && (update = true));
-    }
-
-    if (update) {
-      indexedTabStates[id].hasLoaded = true;
-      indexedTabStates[id].spinner.style.display = STYLE.FLEX;
-    }
-
-    indexedTabStates[id].readHead = message.readto;
-    indexedTabStates[id].firstRun = false;
-  }
-  else if (message.readto === -1) {
-    indexedTabStates[id].readHead = 0;
-    indexedTabStates[id].hasLoaded = true;
-    indexedTabStates[id].firstRun = false;
-    indexedTabStates[id].spinner.style.display = STYLE.FLEX;
-  }
-  else if (message.timesflushed > indexedTabStates[id].timesflushed) {
-    indexedTabStates[id].timesflushed = message.timesflushed;
-    indexedTabStates[id].readHead = message.readto;
-  }
-}

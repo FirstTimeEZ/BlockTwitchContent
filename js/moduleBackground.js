@@ -12,15 +12,15 @@ const requestHandlers = {
   requestForState: () => getStorageItemStates(),
   requestForStateUpdate: () => { getStorageItemStates(); broadcastToTwitchTabs({ refreshState: true }); },
   requestForSettingsTab: () => openHistoryPage(),
-  requestContentNew: () => { return { streamerData: streamerData } },
-  contentModuleUpdateNew: (message) => { updateContentModuleDataNew(message); },
+  requestContent: () => { return { streamerData: streamerData } },
+  contentModuleUpdate: (message) => { updateContentModuleData(message); },
 }
 
-function updateContentModuleDataNew(message) {
-  if (message.values.length > 0) {
-    let found = streamerData.find((data) => data.streamer == message.streamer);
+function updateContentModuleData(message) {
+  let found = streamerData.find((data) => data.streamer == message.streamer);
 
-    if (found) {
+  if (found) {
+    if (message.values.length > 0) {
       if (found.values.length > CONFIG.HISTORY.MAX) {
         found.values.splice(0, found.values.length - CONFIG.HISTORY.RETAIN);
         found.flushCount++;
@@ -29,14 +29,12 @@ function updateContentModuleDataNew(message) {
 
       found.values.push(...message.values);
     }
-    else {
-      message.afterFlushCount = 0;
-      message.flushCount = 0;
-      streamerData.push(message);
-    }
   }
-
-  console.log(streamerData[0]);
+  else {
+    message.afterFlushCount = 0;
+    message.flushCount = 0;
+    streamerData.push(message);
+  }
 }
 
 function checkChatShell(details) {
