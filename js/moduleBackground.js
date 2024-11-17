@@ -12,14 +12,31 @@ const requestHandlers = {
   requestForState: () => getStorageItemStates(),
   requestForStateUpdate: () => { getStorageItemStates(); broadcastToTwitchTabs({ refreshState: true }); },
   requestForSettingsTab: () => openHistoryPage(),
-  requestContent: () => { return { streamerData: streamerData } },
-  contentModuleUpdate: (message) => { updateContentModuleData(message); },
+  requestContentNew: () => { return { streamerData: streamerData } },
+  contentModuleUpdateNew: (message) => { updateContentModuleDataNew(message); },
 }
 
-function updateContentModuleData(message) {
-  let found = streamerData.find((data) => data.streamer == message.streamer);
+function updateContentModuleDataNew(message) {
+  if (message.values.length > 0) {
+    let found = streamerData.find((data) => data.streamer == message.streamer);
 
-  found !== undefined ? Object.assign(found, message) : streamerData.push(message);
+    if (found) {
+      if (found.values.length > CONFIG.HISTORY.MAX) {
+        found.values.splice(0, found.values.length - CONFIG.HISTORY.RETAIN);
+        found.flushCount++;
+        found.afterFlushCount = found.values.length;
+      }
+
+      found.values.push(...message.values);
+    }
+    else {
+      message.afterFlushCount = 0;
+      message.flushCount = 0;
+      streamerData.push(message);
+    }
+  }
+
+  console.log(streamerData[0]);
 }
 
 function checkChatShell(details) {

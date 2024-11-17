@@ -97,7 +97,7 @@
     const len = blockedContent.length;
     if (len > 0) {
       const newValues = blockedContent.splice(0, len);
-      browser.runtime.sendMessage({ contentModuleUpdateNew: true, streamer: lastStreamer, newValues: newValues, newValuesLen: newValues.length });
+      browser.runtime.sendMessage({ contentModuleUpdateNew: true, streamer: lastStreamer, values: newValues });
     }
   }, CONFIG.HISTORY.UPDATE_MS);
 
