@@ -57,6 +57,8 @@ function updateContentModuleData(streamUpdate) {
         stream.values.splice(0, stream.values.length - CONFIG.HISTORY.RETAIN);
         stream.flushCount++;
         stream.afterFlushCount = stream.values.length;
+
+        logDebug("spliced stored data", streamUpdate.streamer, stream.flushCount, stream.afterFlushCount);
       }
 
       stream.values.push(...streamUpdate.values);

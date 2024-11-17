@@ -264,24 +264,13 @@ document.addEventListener(UI.DOM_LOADED, () => setInterval(() => {
 }, CONFIG.HISTORY.UPDATE_MS));
 
 document.addEventListener(UI.DOM_LOADED, () => setInterval(() => {
-  let heads = checkAllHeads();
+  const heads = checkAllHeads();
   if (heads.length > 0) {
-    browser.runtime.sendMessage({ requestContentSpecific: true, indices: heads }).then((response) => {
-      if (response.length > 0) {
-        for (let index = 0; index < response.length; index++) {
-          const element = response[index];
-          let found = tabStates.find((data) => data.streamer == element.streamer);
-          if (found) {
-            if (element.values != undefined) {
-              found.message.values.push(...element.values);
-            }
-            else {
-              found.message.values = [];
-              found.readHead = element.afterFlushCount;
-            }
-          }
-        }
-      }
+    browser.runtime.sendMessage({ requestContentSpecific: true, indices: heads }).then((streamData) => {
+      streamData.forEach((stream) => {
+        const streamTab = tabStates.find((data) => data.streamer == stream.streamer);
+        streamTab && stream.values != undefined ? streamTab.message.values.push(...stream.values) : (streamTab.message.values = [], streamTab.readHead = stream.afterFlushCount);
+      });
     });
   }
 }, CONFIG.HISTORY.UPDATE_MS));
