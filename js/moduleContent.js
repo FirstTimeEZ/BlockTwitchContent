@@ -42,7 +42,7 @@
       blockedContent = [];
 
       if (document.querySelector(CONFIG.VIDEO_PLAYER) !== null) {
-        browser.runtime.sendMessage({ contentModuleUpdate: true, streamer: lastStreamer, values: [] });
+        browser.runtime.sendMessage({ updateFromContentModule: true, streamer: lastStreamer, values: [] });
       }
 
       console.log(CM.LOADED, stream);
@@ -93,7 +93,7 @@
 
   setInterval(() => {
     const len = blockedContent.length;
-    len > 0 && browser.runtime.sendMessage({ contentModuleUpdate: true, streamer: lastStreamer, values: blockedContent.splice(0, len) });
+    len > 0 && browser.runtime.sendMessage({ updateFromContentModule: true, streamer: lastStreamer, values: blockedContent.splice(0, len) });
   }, CONFIG.HISTORY.UPDATE_MS);
 
   new MutationObserver(() => checkStreamHasChanged()).observe(document.querySelector('title'), { childList: true });

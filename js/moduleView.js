@@ -9,7 +9,21 @@ const DETAILS_REGEX = /((display-name=|user-id=|badges=|badge-info=)[^\n;:.]+)/g
 const MESSAGE_REGEX = /(PRIVMSG.+?:)([^\n]+)/;
 
 let initialTabSet = false;
-let indexedTabStates = [];
+let tabStates = [];
+let tabIndex = 0;
+
+function checkAllHeads() {
+  let ind = [];
+
+  for (let index = 0; index < tabStates.length; index++) {
+    const element = tabStates[index];
+    if (element.useSpecifc) {
+      ind.push({ streamer: element.streamer, head: element.readHead, flushCount: element.flushCount });
+    }
+  }
+
+  return ind;
+}
 
 function createMessageCard(messageData) {
   const card = document.createElement(HTML.DIV);
@@ -167,14 +181,11 @@ function createNewTabState(data) {
   createTab.appendChild(container);
   DOM.TABS_CONTENT.appendChild(createTab);
 
-  indexedTabStates[data.id] = { readHead: 0, message: data, streamer: data.streamer };
-  indexedTabStates[data.id].timesflushed = 0;
-  indexedTabStates[data.id].firstRun = true;
-  indexedTabStates[data.id].hasLoaded = false;
-  indexedTabStates[data.id].dom = document.getElementById(`${CSS.MESSAGES}${data.id}`);
-  indexedTabStates[data.id].spinner = document.getElementById(`${CSS.SPINNER}${data.id}`);
-  indexedTabStates[data.id].spinner.style.display = STYLE.NONE;
-  indexedTabStates[data.id].uri = URI.TWITCH + data.streamer.toLowerCase();
+  tabStates[data.id] = { readHead: 0, message: data, streamer: data.streamer, firstRun: true, hasLoaded: false, useSpecifc: true };
+  tabStates[data.id].dom = document.getElementById(`${CSS.MESSAGES}${data.id}`);
+  tabStates[data.id].spinner = document.getElementById(`${CSS.SPINNER}${data.id}`);
+  tabStates[data.id].spinner.style.display = STYLE.NONE;
+  tabStates[data.id].uri = URI.TWITCH + data.streamer.toLowerCase();
 
   if (!initialTabSet) {
     showTab(data.id);
@@ -210,55 +221,76 @@ function renderPageElements() {
 }
 
 function renderMessages(message, dom, id) {
-  if (message.values.length > indexedTabStates[id].readHead) {
+  if (message.values.length > tabStates[id].readHead) {
     let update = undefined;
 
-    for (let i = message.values.length - 1; i >= indexedTabStates[id].readHead; i--) {
-      const parsedMessage = parseMessageDetails(message.values[i]);
-      const messageCard = createMessageCard(parsedMessage);
-
-      indexedTabStates[id].hasLoaded ? dom.insertBefore(messageCard, dom.firstChild) : dom.appendChild(messageCard), (update === undefined && (update = true));
+    for (let i = message.values.length - 1; i >= tabStates[id].readHead; i--) {
+      const value = message.values[i];
+      if (value != undefined) {
+        const parsedMessage = parseMessageDetails(value);
+        const messageCard = createMessageCard(parsedMessage);
+        tabStates[id].hasLoaded ? dom.insertBefore(messageCard, dom.firstChild) : dom.appendChild(messageCard), (update === undefined && (update = true));
+        message.values[i] = undefined;
+      }
     }
 
     if (update) {
-      indexedTabStates[id].hasLoaded = true;
-      indexedTabStates[id].spinner.style.display = STYLE.FLEX;
+      tabStates[id].hasLoaded = true;
+      tabStates[id].spinner.style.display = STYLE.FLEX;
     }
 
-    indexedTabStates[id].readHead = message.values.length;
-    indexedTabStates[id].firstRun = false;
+    tabStates[id].readHead = message.values.length;
+    tabStates[id].firstRun = false;
   }
-  else if (message.flushCount > indexedTabStates[id].flushCount) {
-    indexedTabStates[id].flushCount = message.flushCount;
-    indexedTabStates[id].readHead = message.afterFlushCount;
-  }
-  else if (!indexedTabStates[id].renderedOnce && message.values.length === 0) {
-    indexedTabStates[id].readHead = 0;
-    indexedTabStates[id].hasLoaded = true;
-    indexedTabStates[id].firstRun = false;
-    indexedTabStates[id].spinner.style.display = STYLE.FLEX;
-    indexedTabStates[id].renderedOnce = true;
+  else if (!tabStates[id].renderedOnce && message.values.length === 0) {
+    tabStates[id].readHead = 0;
+    tabStates[id].hasLoaded = true;
+    tabStates[id].firstRun = false;
+    tabStates[id].spinner.style.display = STYLE.FLEX;
+    tabStates[id].renderedOnce = true;
   }
 }
 
 document.addEventListener(UI.DOM_LOADED, () => setInterval(() => {
-  browser.runtime.sendMessage({ requestContent: true }).then((e) => {
-    for (let index = 0; index < e.streamerData.length; index++) {
-      e.streamerData[index].id = index;
-      if (indexedTabStates[index] === undefined) {
-        createNewTabState(e.streamerData[index])
-      } else {
-        indexedTabStates[index].message = e.streamerData[index];
+  browser.runtime.sendMessage({ requestContent: true, exclude: checkAllHeads() }).then((response) => {
+    if (response.length > 0) {
+      for (let index = 0; index < response.length; index++) {
+        response[index].id = tabIndex;
+        tabStates[tabIndex] === undefined && createNewTabState(response[index]);
+        tabIndex++;
       }
     }
   });
 }, CONFIG.HISTORY.UPDATE_MS));
 
+document.addEventListener(UI.DOM_LOADED, () => setInterval(() => {
+  let heads = checkAllHeads();
+  if (heads.length > 0) {
+    browser.runtime.sendMessage({ requestContentSpecific: true, indices: heads }).then((response) => {
+      if (response.length > 0) {
+        for (let index = 0; index < response.length; index++) {
+          const element = response[index];
+          let found = tabStates.find((data) => data.streamer == element.streamer);
+          if (found) {
+            if (element.values != undefined) {
+              found.message.values.push(...element.values);
+            }
+            else {
+              found.message.values = [];
+              found.readHead = element.afterFlushCount;
+            }
+          }
+        }
+      }
+    });
+  }
+}, CONFIG.HISTORY.UPDATE_MS));
+
 renderPageElements();
 
 setInterval(() => {
-  for (let index = 0; index < indexedTabStates.length; index++) {
-    const tabState = indexedTabStates[index];
+  for (let index = 0; index < tabStates.length; index++) {
+    const tabState = tabStates[index];
 
     tabState && tabState.message && renderMessages(tabState.message, tabState.dom, index);
   }

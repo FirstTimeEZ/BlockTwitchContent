@@ -12,8 +12,46 @@ const requestHandlers = {
   requestForState: () => getStorageItemStates(),
   requestForStateUpdate: () => { getStorageItemStates(); broadcastToTwitchTabs({ refreshState: true }); },
   requestForSettingsTab: () => openHistoryPage(),
-  requestContent: () => { return { streamerData: streamerData } },
-  contentModuleUpdate: (message) => { updateContentModuleData(message); },
+  requestContent: (message) => { return sendContentMinusExcluded(message) },
+  requestContentSpecific: (message) => { return sendSpecificContent(message) },
+  updateFromContentModule: (message) => { updateContentModuleData(message); },
+}
+
+function sendContentMinusExcluded(message) {
+  let results = [];
+
+  for (let index = 0; index < streamerData.length; index++) {
+    const element = streamerData[index];
+
+    if (!message.exclude.find((data) => data.streamer == element.streamer)) {
+      results.push(element);
+    }
+  }
+
+  return results;
+}
+
+function sendSpecificContent(message) {
+  let results = [];
+
+  for (let index = 0; index < message.indices.length; index++) {
+    const element = message.indices[index];
+    const found = streamerData.find((data) => data.streamer == element.streamer);
+
+    if (found) {
+      if (element.head > found.values.length) {
+        results.push({ streamer: element.streamer, values: undefined, afterFlushCount: found.afterFlushCount });
+      }
+      else {
+        var r = found.values.slice(element.head);
+        if (r.length > 0) {
+          results.push({ streamer: element.streamer, values: r });
+        }
+      }
+    }
+  }
+
+  return results;
 }
 
 function updateContentModuleData(message) {
