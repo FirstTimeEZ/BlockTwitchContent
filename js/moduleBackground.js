@@ -6,72 +6,66 @@ import { decodeData, isValidSender, logDebug } from "./exports/app/util.js";
 import { insertFragmentListener, removeFragmentListener } from "./exports/app/fragments.js";
 import { broadcastToTwitchTabs, broadcastToTwitchTabsCallback, reloadTab } from "./exports/app/tabs.js";
 
-let streamerData = [];
+let streamData = [];
 
 const requestHandlers = {
   requestForState: () => getStorageItemStates(),
   requestForStateUpdate: () => { getStorageItemStates(); broadcastToTwitchTabs({ refreshState: true }); },
   requestForSettingsTab: () => openHistoryPage(),
-  requestContent: (message) => { return sendContentMinusExcluded(message) },
-  requestContentSpecific: (message) => { return sendSpecificContent(message) },
-  updateFromContentModule: (message) => { updateContentModuleData(message); },
+  requestContent: (headsExclude) => { return sendContentMinusExcluded(headsExclude) },
+  requestContentSpecific: (headsInclude) => { return sendSpecificContent(headsInclude) },
+  updateFromContentModule: (contentUpdate) => { updateContentModuleData(contentUpdate); },
 }
 
-function sendContentMinusExcluded(message) {
+function sendContentMinusExcluded(headsExclude) {
   let results = [];
 
-  for (let index = 0; index < streamerData.length; index++) {
-    const element = streamerData[index];
-
-    if (!message.exclude.find((data) => data.streamer == element.streamer)) {
-      results.push(element);
-    }
-  }
+  streamData.forEach((requestingStream) => !headsExclude.exclude.find((data) => data.streamer == requestingStream.streamer) && results.push(requestingStream));
 
   return results;
 }
 
-function sendSpecificContent(message) {
+function sendSpecificContent(headsInclude) {
   let results = [];
 
-  for (let index = 0; index < message.indices.length; index++) {
-    const element = message.indices[index];
-    const found = streamerData.find((data) => data.streamer == element.streamer);
+  headsInclude.indices.forEach(requestingStream => {
+    const stream = streamData.find((data) => data.streamer == requestingStream.streamer);
 
-    if (found) {
-      if (element.head > found.values.length) {
-        results.push({ streamer: element.streamer, values: undefined, afterFlushCount: found.afterFlushCount });
+    if (stream) {
+      if (requestingStream.head > stream.values.length) {
+        results.push({ streamer: requestingStream.streamer, values: undefined, afterFlushCount: stream.afterFlushCount });
       }
       else {
-        var r = found.values.slice(element.head);
-        if (r.length > 0) {
-          results.push({ streamer: element.streamer, values: r });
+        const specificValues = stream.values.slice(requestingStream.head);
+
+        if (specificValues.length > 0) {
+          results.push({ streamer: requestingStream.streamer, values: specificValues });
         }
       }
     }
-  }
+  });
 
   return results;
 }
 
-function updateContentModuleData(message) {
-  let found = streamerData.find((data) => data.streamer == message.streamer);
+function updateContentModuleData(streamUpdate) {
+  let stream = streamData.find((data) => data.streamer == streamUpdate.streamer);
 
-  if (found) {
-    if (message.values.length > 0) {
-      if (found.values.length > CONFIG.HISTORY.MAX) {
-        found.values.splice(0, found.values.length - CONFIG.HISTORY.RETAIN);
-        found.flushCount++;
-        found.afterFlushCount = found.values.length;
+  if (stream) {
+    if (streamUpdate.values.length > 0) {
+      if (stream.values.length > CONFIG.HISTORY.MAX) {
+        stream.values.splice(0, stream.values.length - CONFIG.HISTORY.RETAIN);
+        stream.flushCount++;
+        stream.afterFlushCount = stream.values.length;
       }
 
-      found.values.push(...message.values);
+      stream.values.push(...streamUpdate.values);
     }
   }
   else {
-    message.afterFlushCount = 0;
-    message.flushCount = 0;
-    streamerData.push(message);
+    streamUpdate.afterFlushCount = 0;
+    streamUpdate.flushCount = 0;
+    streamData.push(streamUpdate);
   }
 }
 
